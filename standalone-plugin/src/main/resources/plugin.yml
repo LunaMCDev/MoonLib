@@ -1,0 +1,14 @@
+name: MoonLib
+version: ${project.version}
+main: dev.lunamc.moonlib.standalone.MoonLibStandalone
+api-version: '1.13'
+folia-supported: true
+# Load before the plugins that depend on it.
+load: STARTUP
+description: Shared MoonLib library for plugins that depend on it instead of shading it.
+author: LunaMCDev
+
+permissions:
+  moonlib.admin:
+    description: Use /moonlib to see which plugins use MoonLib.
+    default: op

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  MoonLib - a batteries-included foundation for Bukkit / Spigot / Paper plugins.
+
+  Build & install to your local repository:   mvn clean install
+  Build with javadoc + sources jars:          mvn clean install -P release
+
+  Consumers either shade this artifact into their plugin (relocated or not), or depend on the
+  standalone MoonLib plugin in standalone-plugin/. Any number of plugins can use it at once.
+  See docs/shading.md.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>dev.lunamc</groupId>
+    <artifactId>moonlib</artifactId>
+    <version>1.1.0</version>
+    <packaging>jar</packaging>
+
+    <name>MoonLib</name>
+    <description>
+        A shadeable plugin development library for Bukkit, Spigot, Paper, Purpur and Folia.
+        Commands, menus, scoreboards, multi-version support, schedulers, configs and utilities.
+    </description>
+    <url>https://github.com/LunaMCDev/MoonLib</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>LunaMCDev</id>
+            <name>Luna</name>
+        </developer>
+    </developers>
+
+    <properties>
+        <!--
+          Java 8 bytecode keeps the library loadable on 1.8.8 servers (which run Java 8)
+          while still running perfectly on modern Java 21+ servers.
+        -->
+        <java.release>8</java.release>
+        <maven.compiler.release>${java.release}</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!--
+          The API we compile against. Anything newer than 1.8.8 is only ever called behind a
+          ServerVersion check, so compiling against a modern API is safe. Requires JDK 21 to build.
+        -->
+        <spigot.version>1.21.4-R0.1-SNAPSHOT</spigot.version>
+        <junit.version>5.11.4</junit.version>
+    </properties>
+
+    <repositories>
+        <!-- spigot-api; its own dependencies (bungeecord-chat, gson, ...) come from Maven Central -->
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Provided by the server at runtime; never shaded. -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${spigot.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>clean install</defaultGoal>
+        <resources>
+            <!-- moonlib.properties carries ${project.version} so MoonLib can detect version mismatches
+                 between plugins that share one copy. -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>${java.release}</release>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                        <arg>-Xlint:-options</arg>
+                        <arg>-Xlint:-deprecation</arg>
+                        <arg>-Xlint:-removal</arg>
+                        <arg>-Xlint:-classfile</arg>
+                        <arg>-Xlint:-processing</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Implementation-Title>${project.name}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- mvn clean install -P release : also attaches -sources.jar and -javadoc.jar -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.11.2</version>
+                        <configuration>
+                            <doctitle>MoonLib ${project.version} API</doctitle>
+                            <windowtitle>MoonLib ${project.version} API</windowtitle>
+                            <links>
+                                <link>https://hub.spigotmc.org/javadocs/spigot/</link>
+                            </links>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
