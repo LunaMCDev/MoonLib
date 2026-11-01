@@ -1,0 +1,6 @@
+# JitPack builds with Java 8 by default. MoonLib compiles against the Spigot 1.21.4 API, which is
+# Java 21 bytecode, so the build needs JDK 21. (The jar it produces is still Java 8 bytecode.)
+jdk:
+  - openjdk21
+install:
+  - mvn -B clean install -DskipTests

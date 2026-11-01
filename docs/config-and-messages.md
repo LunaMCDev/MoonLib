@@ -2,6 +2,9 @@
 
 Package: `dev.lunamc.moonlib.config`
 
+> For general YAML **and JSON** files, storing your own classes, and per-player data, see
+> [data-files.md](data-files.md). `ConfigFile` is a `YamlFile`, so everything there works on it too.
+
 ## `ConfigFile`
 
 ```java

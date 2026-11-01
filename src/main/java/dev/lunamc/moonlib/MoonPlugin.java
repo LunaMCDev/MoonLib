@@ -3,6 +3,10 @@ package dev.lunamc.moonlib;
 import dev.lunamc.moonlib.command.CommandRegistry;
 import dev.lunamc.moonlib.command.MoonCommand;
 import dev.lunamc.moonlib.config.ConfigFile;
+import dev.lunamc.moonlib.config.DataFile;
+import dev.lunamc.moonlib.config.DataStore;
+import dev.lunamc.moonlib.config.JsonFile;
+import dev.lunamc.moonlib.config.YamlFile;
 import dev.lunamc.moonlib.util.Log;
 import dev.lunamc.moonlib.version.ServerSoftware;
 import dev.lunamc.moonlib.version.ServerVersion;
@@ -161,6 +165,38 @@ public abstract class MoonPlugin extends JavaPlugin {
      */
     protected final ConfigFile loadConfig(String name) {
         return new ConfigFile(this, name);
+    }
+
+    /**
+     * Loads (creating it if needed) a YAML file in the data folder, with defaults from the jar.
+     *
+     * @param name e.g. {@code "mines.yml"}
+     * @return the loaded file
+     */
+    protected final YamlFile loadYaml(String name) {
+        return DataFile.yaml(this, name);
+    }
+
+    /**
+     * Loads (creating it if needed) a JSON file in the data folder, with defaults from the jar.
+     *
+     * @param name e.g. {@code "data/stats.json"}
+     * @return the loaded file
+     */
+    protected final JsonFile loadJson(String name) {
+        return DataFile.json(this, name);
+    }
+
+    /**
+     * Creates a folder-backed store with one JSON file per key, e.g. per-player data.
+     *
+     * @param folder the folder inside the data folder, e.g. {@code "players"}
+     * @param type   the stored class
+     * @param <T>    the stored type
+     * @return the store
+     */
+    protected final <T> DataStore<T> dataStore(String folder, Class<T> type) {
+        return DataStore.json(this, folder, type);
     }
 
     /**

@@ -16,7 +16,7 @@
 
     <groupId>dev.lunamc</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <name>MoonLib</name>
@@ -95,6 +95,28 @@
             </resource>
         </resources>
         <plugins>
+            <!-- Fail early with a readable message instead of "invalid flag" when built on an old JDK. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>require-jdk-21</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[21,)</version>
+                                    <message>MoonLib must be built with JDK 21 or newer (the Spigot API it compiles against is Java 21 bytecode). The jar it produces still runs on Java 8. On JitPack, keep jitpack.yml with "jdk: openjdk21" in the repository root.</message>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

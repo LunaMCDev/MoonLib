@@ -39,7 +39,7 @@ plugin and get straight to the parts that are actually yours.
 | **Multi-version** | `.version` | Version/software detection, modern material, sound and enchantment names on every version, reflection helpers |
 | **Scheduler** | `.scheduler` | One API for Bukkit and **Folia** (global, async, entity and region tasks), `CompletableFuture` helpers |
 | **Items** | `.item` | `ItemBuilder`, custom-texture heads, persistent item tags, inventory counting/removal, base64 serialisation |
-| **Config** | `.config` | YAML files with auto-merged defaults and broken-file recovery, translatable `Messages` |
+| **Files & config** | `.config` | Create, edit and save **YAML and JSON** files with one API, store your own classes directly, per-player `DataStore`, auto-merged defaults, broken-file recovery, atomic saves, translatable `Messages` |
 | **Events** | `.event` | Lambda listeners with filters, priorities and auto-expiry |
 | **Chat input** | `.input` | Ask a player to type something, with validation, timeout and cancel |
 | **Hooks** | `.hook` | PlaceholderAPI and Vault economy, with no compile-time dependency |
@@ -57,6 +57,25 @@ cd MoonLib
 mvn clean install
 ```
 
+Or use it straight from GitHub through [JitPack](https://jitpack.io) (the repository's `jitpack.yml`
+tells JitPack to build with JDK 21):
+
+```xml
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+
+<dependency>
+    <groupId>com.github.LunaMCDev</groupId>
+    <artifactId>MoonLib</artifactId>
+    <version>1.2.0</version>   <!-- a release tag, a commit hash, or main-SNAPSHOT -->
+</dependency>
+```
+
+The JitPack artifact uses the `com.github.LunaMCDev` group, but the Java package is still
+`dev.lunamc.moonlib`, so relocation configs stay the same.
+
 ### 2. Add it to your plugin
 
 MoonLib can be relocated into your jar (recommended), shaded without relocating, or installed once as a
@@ -67,7 +86,7 @@ of these modes; see [docs/shading.md](docs/shading.md). The relocated setup:
 <dependency>
     <groupId>dev.lunamc</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -251,6 +270,10 @@ MoonLib.runAs(plugin, () -> Tasks.timer(0, 20, tick)); // explicit ownership, wh
 ItemStack crate = ItemBuilder.skull().texture("e3b6b6e6...").name("&dMoon Crate").tag("crate", "moon").build();
 
 ConfigFile mines = new ConfigFile(this, "mines.yml");          // copied from the jar, new keys merged on update
+JsonFile stats = DataFile.json(this, "data/stats.json");
+stats.set("players." + uuid, playerData).save();             // your own classes, ItemStacks, UUIDs...
+DataStore<PlayerData> players = DataStore.json(this, "players", PlayerData.class);
+players.saveAsync(uuid, data);                                // plugins/YourPlugin/players/<uuid>.json
 messages.send(player, "rankup.success", "rank", "B");
 
 Events.subscribe(BlockBreakEvent.class).ignoreCancelled()
@@ -279,6 +302,7 @@ new Cuboid(pos1, pos2).fill(composition);
 | [Multi-version support](docs/multi-version.md) | How MoonLib stays compatible, and how to write compatible code yourself |
 | [Scheduler](docs/scheduler.md) | `Tasks`, Folia, async patterns |
 | [Items](docs/items.md) | `ItemBuilder`, `Skulls`, `ItemTags`, `Items` |
+| [YAML & JSON files](docs/data-files.md) | `DataFile`, `YamlFile`, `JsonFile`, `DataStore`, storing your own classes |
 | [Config & messages](docs/config-and-messages.md) | `ConfigFile`, `Messages`, translating built-in messages |
 | [Events & chat input](docs/events-and-input.md) | `Events`, `ChatInput` |
 | [Utilities & hooks](docs/utilities.md) | `Text`, `Titles`, `Durations`, `Numbers`, `Cooldown`, `Locations`, `Cuboid`, `Players`, `Log`, PlaceholderAPI, Vault |
@@ -303,7 +327,7 @@ MoonLib/
 │   │   └── adapter/              internal per-version implementations
 │   ├── scheduler/                Bukkit / Folia scheduler
 │   ├── item/                     items, heads, tags
-│   ├── config/                   YAML files, messages
+│   ├── config/                   YAML/JSON files, object mapping, data stores, messages
 │   ├── event/                    functional listeners
 │   ├── input/                    chat prompts
 │   ├── hook/                     PlaceholderAPI, Vault
