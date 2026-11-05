@@ -74,7 +74,7 @@ because each copy has exactly one plugin.
 <dependency>
     <groupId>dev.lunamc</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.4.0</version>
+    <version>1.1.1-alpha</version>
 </dependency>
 ```
 
@@ -116,7 +116,7 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:26.3-R0.1-SNAPSHOT")
-    implementation("dev.lunamc:moonlib:1.4.0")
+    implementation("dev.lunamc:moonlib:1.1.1-alpha")
 }
 
 tasks.shadowJar {
@@ -157,7 +157,7 @@ Build the standalone plugin and install it once:
 ```bash
 cd MoonLib && mvn clean install
 cd standalone-plugin && mvn clean package
-# copy standalone-plugin/target/MoonLib-1.4.0.jar into plugins/
+# copy standalone-plugin/target/MoonLib-1.1.1-alpha.jar into plugins/
 ```
 
 In each plugin that uses it:
@@ -166,7 +166,7 @@ In each plugin that uses it:
 <dependency>
     <groupId>dev.lunamc</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.4.0</version>
+    <version>1.1.1-alpha</version>
     <scope>provided</scope>   <!-- not shaded -->
 </dependency>
 ```

@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * Marks the method of a {@link Command @Command} class that runs when the command is used with no
  * subcommand. Without one, the bare command shows the help page.
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

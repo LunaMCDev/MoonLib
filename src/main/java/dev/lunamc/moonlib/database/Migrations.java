@@ -31,7 +31,7 @@ import java.util.logging.Level;
  * supports transactional DDL (SQLite, PostgreSQL). Never change a migration that has shipped: add
  * a new one instead.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class Migrations {
 

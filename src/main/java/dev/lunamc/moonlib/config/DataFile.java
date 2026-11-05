@@ -912,7 +912,7 @@ public abstract class DataFile {
      * @param plugin      the owning plugin; watching stops when it shuts down MoonLib
      * @param afterReload runs after each reload, may be {@code null}
      * @return the watch, which can be closed to stop watching
-     * @since 1.4.0
+     * @since 1.1.1-alpha
      */
     public dev.lunamc.moonlib.util.FileWatcher.Watch watch(Plugin plugin, Runnable afterReload) {
         return dev.lunamc.moonlib.util.FileWatcher.watch(plugin, file, () -> {

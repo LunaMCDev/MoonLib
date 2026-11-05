@@ -6,6 +6,6 @@
  * Everything created through these classes is removed when the owning plugin shuts down MoonLib.
  * See {@code docs/displays.md}. Sidebars live in {@link dev.lunamc.moonlib.scoreboard}.
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 package dev.lunamc.moonlib.display;

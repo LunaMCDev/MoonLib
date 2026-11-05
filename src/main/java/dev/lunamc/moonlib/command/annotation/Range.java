@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * Limits a numeric parameter ({@code int}, {@code long} or {@code double} and their wrappers) to a
  * range. Values outside it are rejected with the standard "number out of range" message.
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

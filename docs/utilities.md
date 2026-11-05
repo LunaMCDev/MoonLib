@@ -128,7 +128,7 @@ Output goes through your plugin's logger, so lines are prefixed with `[YourPlugi
 
 ## `FileWatcher`
 
-*Since 1.4.0.* Runs code when files change on disk, using the operating system's notifications (no
+*Since 1.1.1-alpha.* Runs code when files change on disk, using the operating system's notifications (no
 polling). Changes are debounced by 300 ms and callbacks run on the server thread.
 
 ```java
@@ -145,7 +145,7 @@ own saves (see [config-and-messages.md](config-and-messages.md#reloading-automat
 
 ## `UpdateChecker`
 
-*Since 1.4.0.* Tells the console and staff when a newer version is published.
+*Since 1.1.1-alpha.* Tells the console and staff when a newer version is published.
 
 ```java
 UpdateChecker.modrinth(this, "moonprison")       // or spigot(this, 12345), github(this, "Owner/Repo"),

@@ -78,6 +78,6 @@ harnesses report.
 1. Move `Unreleased` entries in the changelog to a new version heading.
 2. Bump `<version>` in `pom.xml`, `MoonLib.VERSION`, the example/standalone/template poms and the
    README/docs install snippets.
-3. Tag the commit with the bare version (`1.4.0`) and push the tag. The release workflow checks the
+3. Tag the commit with the bare version (`1.1.1-alpha`) and push the tag. The release workflow checks the
    tag matches the pom, builds the jars and creates the GitHub release; JitPack builds the tag on
    first request.

@@ -56,19 +56,19 @@ public final class ServerVersion implements Comparable<ServerVersion> {
     /**
      * Minecraft 26.1, the first year-based version (needs Java 25).
      *
-     * @since 1.4.0
+     * @since 1.1.1-alpha
      */
     public static final ServerVersion V26_1 = of(26, 1);
     /**
      * Minecraft 26.2.
      *
-     * @since 1.4.0
+     * @since 1.1.1-alpha
      */
     public static final ServerVersion V26_2 = of(26, 2);
     /**
      * Minecraft 26.3, the newest release MoonLib is compiled and tested against.
      *
-     * @since 1.4.0
+     * @since 1.1.1-alpha
      */
     public static final ServerVersion V26_3 = of(26, 3);
 

@@ -40,7 +40,7 @@ A minimal `pom.xml` (the complete version is in [`example-plugin/pom.xml`](../ex
     <dependency>
         <groupId>dev.lunamc</groupId>
         <artifactId>moonlib</artifactId>
-        <version>1.4.0</version>
+        <version>1.1.1-alpha</version>
     </dependency>
 </dependencies>
 ```

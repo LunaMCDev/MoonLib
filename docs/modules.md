@@ -1,6 +1,6 @@
 # Modules & services
 
-*Since 1.4.0.* Large plugins grow into tangles: one `onEnable` that sets up everything, features that
+*Since 1.1.1-alpha.* Large plugins grow into tangles: one `onEnable` that sets up everything, features that
 reach into each other, and one bug that stops the whole plugin from loading. Modules split a plugin
 into independent features that:
 

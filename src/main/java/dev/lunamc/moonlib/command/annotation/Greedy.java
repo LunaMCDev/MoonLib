@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * public void broadcast(CommandSender sender, @Greedy @Arg("message") String message) { ... }
  * }</pre>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

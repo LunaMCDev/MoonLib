@@ -11,7 +11,7 @@ import java.sql.SQLException;
  * }</pre>
  *
  * @param <T> the result type
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 @FunctionalInterface
 public interface RowMapper<T> {

@@ -13,7 +13,7 @@ import java.util.UUID;
  * {@code null} column values come back as {@code null} from the object getters and as {@code 0} or
  * {@code false} from the primitive ones (check {@link #isNull(String)} when that matters).
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class Row {
 

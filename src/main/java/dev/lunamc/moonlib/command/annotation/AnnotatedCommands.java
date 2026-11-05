@@ -81,7 +81,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * type, a missing suggestion method) are reported when the command is built, with the class and
  * method named, rather than when a player first runs it.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class AnnotatedCommands {
 

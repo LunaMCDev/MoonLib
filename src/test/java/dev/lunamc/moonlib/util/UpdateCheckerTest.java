@@ -13,8 +13,8 @@ class UpdateCheckerTest {
         assertTrue(UpdateChecker.compare("1.10.0", "1.9.2") > 0);
         assertTrue(UpdateChecker.compare("v2.0.0", "2.0.0-beta") > 0);
         assertTrue(UpdateChecker.compare("2.0.0-beta", "2.0.0-alpha") > 0);
-        assertEquals(0, UpdateChecker.compare("1.4.0", "v1.4.0"));
-        assertEquals(0, UpdateChecker.compare("1.4.0+build.7", "1.4.0"));
+        assertEquals(0, UpdateChecker.compare("1.1.1-alpha", "v1.1.1-alpha"));
+        assertEquals(0, UpdateChecker.compare("1.1.1-alpha+build.7", "1.1.1-alpha"));
         assertTrue(UpdateChecker.compare("1.4", "1.4.1") < 0);
     }
 

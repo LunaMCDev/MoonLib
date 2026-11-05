@@ -6,7 +6,7 @@ All notable changes to MoonLib are documented here. The format follows
 
 ## [Unreleased]
 
-## [1.4.0] - 2026-11-05
+## [1.1.1-alpha] - 2026-11-05
 
 ### Changed
 - Building MoonLib now needs **JDK 25** (the 26.x API is Java 25 bytecode). The jar is still Java 8

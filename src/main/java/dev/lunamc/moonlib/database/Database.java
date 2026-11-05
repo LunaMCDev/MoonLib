@@ -70,7 +70,7 @@ import java.util.logging.Logger;
  * finishing any queued asynchronous work (up to 10 seconds), so final saves in {@code onDisable}
  * are not lost. Call {@link #close()} to close it earlier.
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class Database implements SqlOperations, AutoCloseable {
 

@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  *
  * <p>The manager disables every module automatically when the plugin shuts down MoonLib.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class ModuleManager implements AutoCloseable {
 

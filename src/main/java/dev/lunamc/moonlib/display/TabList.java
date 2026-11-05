@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>Headers and footers need 1.13 or newer (on older servers they are skipped with a one-time
  * warning); names work on every version.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class TabList {
 

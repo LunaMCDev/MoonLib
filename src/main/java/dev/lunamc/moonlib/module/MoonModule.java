@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  * {@link #onDisable} and {@link #provide} is undone automatically when the module is disabled, so
  * {@link #disable()} only needs to save data.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public abstract class MoonModule {
 

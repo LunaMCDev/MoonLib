@@ -118,7 +118,7 @@ public final class MoonContext {
      * resource may still schedule a final save while closing.
      *
      * @param resource the resource
-     * @since 1.4.0
+     * @since 1.1.1-alpha
      */
     public void onShutdown(AutoCloseable resource) {
         if (resource == null) {
@@ -134,7 +134,7 @@ public final class MoonContext {
      * was closed early.
      *
      * @param resource the resource
-     * @since 1.4.0
+     * @since 1.1.1-alpha
      */
     public void cancelShutdown(AutoCloseable resource) {
         synchronized (closeables) {

@@ -17,7 +17,7 @@ import java.util.Locale;
  * db.update(save, player.getUniqueId(), tokens);
  * }</pre>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public enum Dialect {
     /** SQLite. */

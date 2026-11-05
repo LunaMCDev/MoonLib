@@ -8,6 +8,6 @@
  * they share help pages, messages, usage lines and the per-plugin registry, and can be mixed
  * freely. See {@code docs/commands.md}.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 package dev.lunamc.moonlib.command.annotation;
