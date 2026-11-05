@@ -38,7 +38,7 @@
              or change these two lines. -->
         <moonlib.groupId>com.github.LunaMCDev</moonlib.groupId>
         <moonlib.artifactId>MoonLib</moonlib.artifactId>
-        <moonlib.version>1.4.0</moonlib.version>
+        <moonlib.version>1.1.1-alpha</moonlib.version>
         <spigot.version>26.3-R0.1-SNAPSHOT</spigot.version>
 
         <!-- Where your plugin's copy of MoonLib lives in release builds. Keep it inside your package. -->

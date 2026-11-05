@@ -16,7 +16,7 @@
 
     <groupId>dev.lunamc</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.1.0-alpha</version>
+    <version>1.1.1-alpha</version>
     <packaging>jar</packaging>
 
     <name>MoonLib</name>
