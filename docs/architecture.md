@@ -111,4 +111,4 @@ detects Paper, Purpur, Folia and others. Version-specific code lives in three pa
 The unit tests run without a server. Bukkit types are faked with small stubs or dynamic proxies,
 JDBC with a scripted in-memory fake (`FakeJdbc`), and lifecycle behaviour (file watching, shutdown
 order, multi-copy linking) with harnesses that load MoonLib in separate class loaders. See
-[CONTRIBUTING.md](../CONTRIBUTING.md).
+[CONTRIBUTING.md](https://github.com/LunaMCDev/MoonLib/blob/main/CONTRIBUTING.md).

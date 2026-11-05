@@ -35,14 +35,30 @@ jobs:
           python-version: '3.12'
 
       - name: Build Javadoc
-        run: mvn -B -ntp -P release -DskipTests package
+        run: |
+          mvn -B -ntp -P release -DskipTests package
+          # Where the HTML lands depends on the javadoc plugin version (target/apidocs or
+          # target/reports/apidocs), so look for it instead of assuming a path.
+          API_INDEX=$(find target -type f -path '*apidocs/index.html' | head -n 1)
+          if [ -z "$API_INDEX" ]; then
+            mvn -B -ntp -P release -DskipTests javadoc:javadoc
+            API_INDEX=$(find target -type f -path '*apidocs/index.html' | head -n 1)
+          fi
+          if [ -z "$API_INDEX" ]; then
+            echo "::error::No Javadoc HTML found under target/"
+            find target -maxdepth 3 -type d
+            exit 1
+          fi
+          echo "Javadoc found in $(dirname "$API_INDEX")"
+          mkdir -p docs/api
+          cp -r "$(dirname "$API_INDEX")"/. docs/api/
 
       - name: Build guides
+        env:
+          NO_MKDOCS_2_WARNING: '1'
         run: |
           pip install "mkdocs<2" mkdocs-material
           mkdocs build
-          mkdir -p site/api
-          cp -r target/apidocs/. site/api/
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -53,7 +53,7 @@ behaviour that was a bug.
 
 Public API is deprecated for at least one minor release before removal in the next major release.
 Deprecated members say what to use instead in their Javadoc, and the
-[changelog](../CHANGELOG.md) lists them.
+[changelog](https://github.com/LunaMCDev/MoonLib/blob/main/CHANGELOG.md) lists them.
 
 ### Shading means no forced upgrades
 
