@@ -51,6 +51,15 @@ class ServerVersionTest {
     }
 
     @Test
+    void parsesTheLatestRelease() {
+        assertEquals(ServerVersion.V26_3, ServerVersion.parse("26.3-R0.1-SNAPSHOT"));
+        assertEquals(ServerVersion.V26_3, ServerVersion.parse("26.3"));
+        assertTrue(ServerVersion.V26_3.isAtLeast(ServerVersion.V26_1));
+        assertTrue(ServerVersion.V26_3.isAtLeast(ServerVersion.V1_21));
+        assertFalse(ServerVersion.V26_2.isAtLeast(ServerVersion.V26_3));
+    }
+
+    @Test
     void assumesLatestWithoutAServer() {
         // No Bukkit server in unit tests: modern code paths are used.
         assertFalse(ServerVersion.isLegacy());

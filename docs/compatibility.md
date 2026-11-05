@@ -7,7 +7,8 @@
 | Minecraft | 1.8.8 → newest, including year-based releases (26.x) |
 | Server software | CraftBukkit, Spigot, Paper, Purpur, Pufferfish, Folia |
 | Java at runtime | 8+ for MoonLib itself; your server's version decides the minimum (26.1+ needs Java 25, 1.20.5+ needs 21) |
-| Java to build | JDK 21+ (the Spigot API it compiles against is Java 21 bytecode); output is Java 8 bytecode |
+| Java to build | JDK 25+ (MoonLib compiles against the newest API, Spigot 26.3, which is Java 25 bytecode); output is Java 8 bytecode |
+| API compiled against | Spigot 26.3, the latest Minecraft release; older APIs are reached by version checks and reflection |
 
 ## Feature availability by version
 

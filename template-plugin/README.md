@@ -26,13 +26,14 @@ press Build, and the running test server picks it up straight away. No restart, 
    only swap changed *method bodies*; JBR also allows adding and removing methods and fields.
    *File → Project Structure → SDKs → + → Download JDK…*, then:
    - **Vendor:** JetBrains Runtime
-   - **Version:** **25** for Minecraft 26.x, **21** for 1.20.5 to 1.21.x
+   - **Version:** **25** (Minecraft 26.x needs Java 25; also set it as the project SDK, since building
+     against the 26.3 API needs JDK 25)
 
 3. **Download the test server.** Run the **Setup Dev Server** run configuration (top-right run menu).
-   It downloads the newest stable Paper into `run/`, verifies its checksum, and writes
+   It downloads Paper **26.3** (the latest Minecraft release, matching the API the template compiles against) into `run/`, verifies its checksum, and writes
    `eula.txt` and a development `server.properties`. Running the server means you accept the
    [Minecraft EULA](https://aka.ms/MinecraftEULA).
-   - Pin a version: edit the configuration's command line to `validate -Psetup-server -Ddev.paper.version=1.21.4`
+   - Another version: edit the configuration's command line to `validate -Psetup-server -Ddev.paper.version=latest` (or `26.2`, `1.21.11`...)
    - Update Paper later: run it again (it only downloads when there is a newer build)
 
 4. **Point the Dev Server at the JBR.** *Run → Edit Configurations… → Dev Server → JRE* and choose the

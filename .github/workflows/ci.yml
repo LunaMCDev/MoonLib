@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [21, 25]
+        java: [25]
     steps:
       - uses: actions/checkout@v4
 
@@ -45,7 +45,7 @@ jobs:
         run: mvn -B -ntp -f template-plugin/pom.xml package -Pdev -Dmoonlib.groupId=dev.lunamc -Dmoonlib.artifactId=moonlib
 
       - name: Upload jars
-        if: matrix.java == 21
+        if: matrix.java == 25
         uses: actions/upload-artifact@v4
         with:
           name: jars

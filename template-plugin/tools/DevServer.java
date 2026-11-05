@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * <p>Run through Maven ({@code mvn validate -Psetup-server}) or directly with Java 11+:</p>
  * <pre>
- *   java tools/DevServer.java setup [--version=latest|1.21.4|26.1.2] [--dir=run] [--force=true]
+ *   java tools/DevServer.java setup [--version=latest|26.3|1.21.11] [--dir=run] [--force=true]
  * </pre>
  *
  * <p>It downloads the newest stable Paper build from PaperMC's Fill v3 API, checks its SHA-256,

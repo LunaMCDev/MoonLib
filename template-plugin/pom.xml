@@ -26,8 +26,9 @@
     <name>MoonTemplate</name>
 
     <properties>
-        <!-- Bytecode level of your plugin. 21 runs on every server from 1.20.5 up (26.x needs a Java 25
-             runtime, which still runs Java 21 bytecode). Use 8 to also support 1.8-1.16 servers. -->
+        <!-- Bytecode level of your plugin. 21 runs on every server from 1.20.5 up, including 26.x (whose
+             Java 25 runtime runs Java 21 bytecode). Use 25 if you only target 26.x, or 8 to also support
+             1.8-1.16 servers. Building needs JDK 25 either way, because the 26.3 API is Java 25 bytecode. -->
         <java.release>21</java.release>
         <maven.compiler.release>${java.release}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,14 +39,14 @@
         <moonlib.groupId>com.github.LunaMCDev</moonlib.groupId>
         <moonlib.artifactId>MoonLib</moonlib.artifactId>
         <moonlib.version>1.4.0</moonlib.version>
-        <spigot.version>1.21.4-R0.1-SNAPSHOT</spigot.version>
+        <spigot.version>26.3-R0.1-SNAPSHOT</spigot.version>
 
         <!-- Where your plugin's copy of MoonLib lives in release builds. Keep it inside your package. -->
         <relocation.package>com.example.template.libs.moonlib</relocation.package>
 
-        <!-- The local test server. "latest" picks the newest Paper version with a stable build;
-             or pin one, e.g. 1.21.4 or 26.1.2. -->
-        <dev.paper.version>latest</dev.paper.version>
+        <!-- The local test server, matching the API version above. Use "latest" for the newest Paper
+             version with a stable build, or pin another, e.g. 26.2 or 1.21.11. -->
+        <dev.paper.version>26.3</dev.paper.version>
         <dev.server.dir>${project.basedir}/run</dev.server.dir>
     </properties>
 
@@ -182,7 +183,7 @@
         </profile>
 
         <!-- ============================================================ setup-server -->
-        <!-- mvn validate -Psetup-server  (add -Ddev.paper.version=1.21.4 to pick a version,
+        <!-- mvn validate -Psetup-server  (add -Ddev.paper.version=26.2 to pick another version,
              -Ddev.force=true to download again) -->
         <profile>
             <id>setup-server</id>

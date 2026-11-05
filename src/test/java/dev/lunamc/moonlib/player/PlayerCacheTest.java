@@ -5,6 +5,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
+import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -49,6 +50,11 @@ class PlayerCacheTest {
                 .build();
     }
 
+    /** A login event as a 26.3 server fires it: name, IP address, UUID, not a server transfer. */
+    static AsyncPlayerPreLoginEvent login(String name, UUID id) {
+        return new AsyncPlayerPreLoginEvent(name, InetAddress.getLoopbackAddress(), id, false);
+    }
+
     static Player player(UUID id, String name) {
         return (Player) Proxy.newProxyInstance(Player.class.getClassLoader(), new Class<?>[]{Player.class},
                 (p, m, a) -> m.getName().equals("getUniqueId") ? id : m.getName().equals("getName") ? name : null);
@@ -59,7 +65,7 @@ class PlayerCacheTest {
         UUID id = UUID.randomUUID();
         disk.put(id, 7);
         PlayerCache<Data> cache = cache(new AtomicBoolean(), null);
-        AsyncPlayerPreLoginEvent login = new AsyncPlayerPreLoginEvent("Luna", id);
+        AsyncPlayerPreLoginEvent login = login("Luna", id);
         cache.handlePreLogin(login);
         assertEquals(AsyncPlayerPreLoginEvent.Result.ALLOWED, login.getLoginResult());
         assertTrue(cache.isLoaded(id));
@@ -77,7 +83,7 @@ class PlayerCacheTest {
     void failedLoadTurnsThePlayerAway() {
         PlayerCache<Data> cache = cache(new AtomicBoolean(true), null);
         UUID id = UUID.randomUUID();
-        AsyncPlayerPreLoginEvent login = new AsyncPlayerPreLoginEvent("Luna", id);
+        AsyncPlayerPreLoginEvent login = login("Luna", id);
         cache.handlePreLogin(login);
         assertEquals(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, login.getLoginResult());
         assertTrue(login.getKickMessage().contains("rejoin"), login.getKickMessage());
@@ -90,13 +96,13 @@ class PlayerCacheTest {
         UUID id = UUID.randomUUID();
         CountDownLatch gate = new CountDownLatch(1);
         PlayerCache<Data> cache = cache(new AtomicBoolean(), gate);
-        cache.handlePreLogin(new AsyncPlayerPreLoginEvent("Luna", id));
+        cache.handlePreLogin(login("Luna", id));
         Player luna = player(id, "Luna");
         cache.handleJoin(luna);
         cache.get(luna).tokens = 50;
 
         cache.handleQuit(luna);                       // save is now blocked on the gate
-        cache.handlePreLogin(new AsyncPlayerPreLoginEvent("Luna", id));
+        cache.handlePreLogin(login("Luna", id));
         cache.handleJoin(luna);
         assertEquals(50, cache.get(luna).tokens, "rejoin sees the latest data");
         gate.countDown();

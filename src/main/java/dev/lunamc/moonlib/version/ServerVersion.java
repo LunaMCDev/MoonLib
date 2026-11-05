@@ -53,6 +53,24 @@ public final class ServerVersion implements Comparable<ServerVersion> {
     public static final ServerVersion V1_20_5 = of(1, 20, 5);
     /** Minecraft 1.21. */
     public static final ServerVersion V1_21 = of(1, 21);
+    /**
+     * Minecraft 26.1, the first year-based version (needs Java 25).
+     *
+     * @since 1.4.0
+     */
+    public static final ServerVersion V26_1 = of(26, 1);
+    /**
+     * Minecraft 26.2.
+     *
+     * @since 1.4.0
+     */
+    public static final ServerVersion V26_2 = of(26, 2);
+    /**
+     * Minecraft 26.3, the newest release MoonLib is compiled and tested against.
+     *
+     * @since 1.4.0
+     */
+    public static final ServerVersion V26_3 = of(26, 3);
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)(?:\\.(\\d+))?");
     private static final Pattern MC_PATTERN = Pattern.compile("\\(MC: (\\d+\\.\\d+(?:\\.\\d+)?)\\)");

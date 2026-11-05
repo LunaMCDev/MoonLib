@@ -34,7 +34,7 @@ A minimal `pom.xml` (the complete version is in [`example-plugin/pom.xml`](../ex
     <dependency>
         <groupId>org.spigotmc</groupId>
         <artifactId>spigot-api</artifactId>
-        <version>1.21.4-R0.1-SNAPSHOT</version>
+        <version>26.3-R0.1-SNAPSHOT</version>
         <scope>provided</scope>
     </dependency>
     <dependency>
@@ -89,7 +89,7 @@ and `disable()` instead. This guarantees that:
    staying half-enabled.
 3. MoonLib shuts down after your `disable()`: *your* menus close, *your* boards are removed, *your*
    commands are unregistered and *your* tasks are cancelled. Other plugins using MoonLib are untouched.
-4. A startup line such as `Enabled MyPlugin v1.0.0 on Paper 1.21.4 in 41ms` is logged.
+4. A startup line such as `Enabled MyPlugin v1.0.0 on Paper 26.3 in 41ms` is logged.
 
 ### Can't extend `MoonPlugin`?
 

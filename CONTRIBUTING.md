@@ -5,7 +5,8 @@ quickly. For how MoonLib works inside, read [docs/architecture.md](docs/architec
 
 ## Building
 
-Requirements: **JDK 21+** and **Maven 3.6.3+**.
+Requirements: **JDK 25+** and **Maven 3.6.3+**. MoonLib compiles against the newest Spigot API (26.3),
+which is Java 25 bytecode; the library itself is still compiled to Java 8.
 
 ```bash
 mvn clean install              # compile, unit tests, install to ~/.m2
@@ -15,6 +16,10 @@ mvn -P release package         # also sources + Javadoc (Javadoc lint must pass)
 The library compiles to **Java 8 bytecode** (`--release 8`) so it loads on 1.8 servers. That means
 no `var`, records, switch expressions, `List.of`, `String#isBlank` and so on in `src/main`.
 The template plugin (`template-plugin/`) targets Java 21 and may use modern Java.
+
+When a new Minecraft version comes out, bump `spigot.version` in all four poms and
+`dev.paper.version` in the template, add a `ServerVersion` constant, and update the version the test
+harnesses report.
 
 ## Tests
 
@@ -65,7 +70,7 @@ The template plugin (`template-plugin/`) targets Java 21 and may use modern Java
 
 - One topic per pull request; keep refactors separate from features.
 - Fill in the checklist in the PR template.
-- CI builds and tests on JDK 21 and 25, builds the example, standalone and template plugins, and
+- CI builds and tests on JDK 25, builds the example, standalone and template plugins, and
   lints the Javadoc.
 
 ## Releasing (maintainers)

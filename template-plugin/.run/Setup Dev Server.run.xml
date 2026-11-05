@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <!-- Downloads the newest stable Paper into run/ (once). Add -Ddev.paper.version=1.21.4 to the
+  <!-- Downloads Paper 26.3 into run/ (once). Add -Ddev.paper.version=latest (or 26.2, 1.21.11...) to the
        command line to pin a version, or -Ddev.force=true to download again. -->
   <configuration default="false" name="Setup Dev Server" type="MavenRunConfiguration" factoryName="Maven">
     <MavenSettings>

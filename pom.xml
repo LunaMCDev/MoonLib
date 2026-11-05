@@ -16,7 +16,7 @@
 
     <groupId>dev.lunamc</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.4.0</version>
+    <version>1.1.0-beta</version>
     <packaging>jar</packaging>
 
     <name>MoonLib</name>
@@ -53,9 +53,10 @@
 
         <!--
           The API we compile against. Anything newer than 1.8.8 is only ever called behind a
-          ServerVersion check, so compiling against a modern API is safe. Requires JDK 21 to build.
+          ServerVersion check, so compiling against the newest API is safe. Minecraft 26.x's API is
+          Java 25 bytecode, so building needs JDK 25 (the jar MoonLib produces is still Java 8).
         -->
-        <spigot.version>1.21.4-R0.1-SNAPSHOT</spigot.version>
+        <spigot.version>26.3-R0.1-SNAPSHOT</spigot.version>
         <junit.version>5.11.4</junit.version>
     </properties>
 
@@ -113,8 +114,8 @@
                                     <message>MoonLib needs Maven 3.6.3 or newer. On JitPack, keep jitpack.yml in the repository root (it installs Maven 3.9.9).</message>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>[21,)</version>
-                                    <message>MoonLib must be built with JDK 21 or newer (the Spigot API it compiles against is Java 21 bytecode). The jar it produces still runs on Java 8. On JitPack, keep jitpack.yml with "jdk: openjdk21" in the repository root.</message>
+                                    <version>[25,)</version>
+                                    <message>MoonLib must be built with JDK 25 or newer (the Spigot 26.x API it compiles against is Java 25 bytecode). The jar it produces still runs on Java 8. On JitPack, keep the jitpack.yml from the repository, which installs JDK 25.</message>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>

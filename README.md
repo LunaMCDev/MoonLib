@@ -13,10 +13,10 @@ server where code changes apply **without restarting**.
 |---|---|
 | **Minecraft** | 1.8.8 → latest (including the year-based 26.x releases) |
 | **Servers** | CraftBukkit, Spigot, Paper, Purpur, Pufferfish, Folia |
-| **Java** | Builds with JDK 21+, ships Java 8 bytecode (so it also loads on 1.8 servers) |
+| **Java** | Builds with JDK 25+ against the Minecraft 26.3 API, ships Java 8 bytecode (so it also loads on 1.8 servers) |
 | **Runtime dependencies** | None. PlaceholderAPI and Vault are optional soft hooks |
 | **Multiple plugins** | Any number per server: relocated, shared, or via the standalone plugin |
-| **Tests** | 112 unit tests plus multi-copy, cross-plugin and lifecycle harnesses |
+| **Tests** | 113 unit tests plus multi-copy, cross-plugin and lifecycle harnesses |
 | **Licence** | MIT |
 
 ---
@@ -71,7 +71,7 @@ mvn clean install
 ```
 
 Or use it straight from GitHub through [JitPack](https://jitpack.io) (the repository's `jitpack.yml`
-tells JitPack to build with JDK 21):
+installs JDK 25 for the build):
 
 ```xml
 <repository>
@@ -402,8 +402,8 @@ IDE. The guides also build into a searchable site with `mkdocs serve` (see `mkdo
 
 [`template-plugin/`](template-plugin) is a complete plugin to copy for new projects. It comes with:
 
-- **Setup Dev Server**: downloads the newest stable Paper (PaperMC Fill API, checksum-verified)
-  into `run/`;
+- **Setup Dev Server**: downloads Paper 26.3, the latest release (PaperMC Fill API,
+  checksum-verified), into `run/`;
 - **Dev Server**: builds the plugin into the server and starts it under the debugger;
 - **edit → Build → done**: IntelliJ hot-swaps your classes (JetBrains Runtime allows adding
   methods and fields too) and the template re-enables its modules with the new code, so you
@@ -461,13 +461,14 @@ mvn clean install              # compile, test, install to ~/.m2
 mvn clean install -P release   # also attach -sources.jar and -javadoc.jar
 ```
 
-Requires **JDK 21 or newer** (the Spigot API it compiles against is Java 21 bytecode). The output
+Requires **JDK 25 or newer**: MoonLib compiles against the newest API, Spigot **26.3**, which is Java 25
+bytecode. The output
 is Java 8 bytecode, so the same jar runs on every supported server.
 
 To compile against a different API version, override the property:
 
 ```bash
-mvn clean install -Dspigot.version=1.21.1-R0.1-SNAPSHOT
+mvn clean install -Dspigot.version=26.2-R0.1-SNAPSHOT
 ```
 
 ---

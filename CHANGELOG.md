@@ -8,6 +8,10 @@ All notable changes to MoonLib are documented here. The format follows
 
 ## [1.4.0] - 2026-11-05
 
+### Changed
+- Building MoonLib now needs **JDK 25** (the 26.x API is Java 25 bytecode). The jar is still Java 8
+  bytecode and runs on every supported server. `jitpack.yml` installs JDK 25 automatically.
+
 ### Added
 - **Annotated commands** (`command.annotation`): `@Command`, `@Subcommand` (nested paths such as
   `"admin reset"`), `@Execute`, `@Arg` (name, optional, default, named type), `@Greedy`, `@Range`,
@@ -42,6 +46,9 @@ All notable changes to MoonLib are documented here. The format follows
 - **Template plugin** (`template-plugin/`): starter project with IntelliJ run configurations, a Paper
   download tool (Fill v3 API, SHA-256 verified), a dev build for hot-swapping with the JetBrains Runtime,
   automatic module reload after builds, self-reloading config and messages, and example modules.
+- Built and tested against the latest Minecraft release: the Spigot **26.3** API (library, example,
+  standalone and template plugins), a 26.3 dev server in the template, and test harnesses that run
+  as a 26.3 server. `ServerVersion.V26_1`, `V26_2`, `V26_3` constants.
 - Documentation: database, modules, player data, displays, rich text, development workflow, architecture,
   compatibility and API stability policy, cookbook and FAQ guides; MkDocs site configuration;
   CONTRIBUTING, SECURITY and code of conduct; CI and docs-publishing workflows; issue and PR templates.
