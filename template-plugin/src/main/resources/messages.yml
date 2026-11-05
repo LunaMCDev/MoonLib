@@ -1,0 +1,24 @@
+# Rich-text tags and & codes both work. Placeholders are {name}.
+# This file reloads by itself when you save it.
+rich-text: true
+prefix: "<gradient:#7F7FD5:#91EAE4><bold>Moon</bold></gradient> <dark_gray>» <gray>"
+
+reloaded: "{prefix}<green>Config, messages and modules reloaded."
+module-reloaded: "{prefix}<green>Module <white>{module}</white> reloaded."
+module-failed: "{prefix}<red>Module <white>{module}</white> failed to start; see the console."
+unknown-module: "{prefix}<red>There is no module called <white>{module}</white>."
+data-load-failed: "&cYour data could not be loaded. Please rejoin in a moment."
+
+stats:
+  - "<dark_gray><st>            </st> <light_purple>{player} <dark_gray><st>            </st>"
+  - "<gray>Joins: <yellow>{joins}"
+  - "<gray>Blocks broken: <aqua>{blocks}"
+  - "<gray>Playing for: <white>{since}"
+
+welcome:
+  message: "{prefix}Welcome back, <white>{player}</white>! This is join <yellow>#{joins}</yellow>."
+  first-join: "{prefix}<yellow>{player}</yellow> joined for the first time. Say hi!"
+
+# Overrides for MoonLib's built-in command messages (optional).
+commands:
+  no-permission: "&cYou can't do that."

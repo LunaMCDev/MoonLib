@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest something MoonLib should do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The problem, not the solution. What do you write by hand today?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: How would you like the API to look?
+      render: java
+  - type: dropdown
+    id: versions
+    attributes:
+      label: Which server versions does it need to work on?
+      multiple: true
+      options: ["1.8 - 1.12", "1.13 - 1.16", "1.17 - 1.21", "26.x", "Folia"]

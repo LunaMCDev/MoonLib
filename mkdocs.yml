@@ -1,0 +1,65 @@
+# Documentation site. Preview locally:  pip install mkdocs-material && mkdocs serve
+# Published to GitHub Pages by .github/workflows/docs.yml (Javadoc under /api/).
+site_name: MoonLib
+site_description: A shadeable foundation for Bukkit, Spigot, Paper, Purpur and Folia plugins
+repo_url: https://github.com/LunaMCDev/MoonLib
+repo_name: LunaMCDev/MoonLib
+edit_uri: edit/main/docs/
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: cyan
+      toggle: { icon: material/weather-sunny, name: Light mode }
+    - scheme: default
+      primary: deep purple
+      accent: cyan
+      toggle: { icon: material/weather-night, name: Dark mode }
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.instant
+    - search.suggest
+    - content.code.copy
+    - content.action.edit
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc: { permalink: true }
+  - pymdownx.highlight: { anchor_linenums: true }
+  - pymdownx.superfences
+  - pymdownx.details
+
+nav:
+  - Home: index.md
+  - Getting started:
+      - Getting started: getting-started.md
+      - Development workflow & hot reload: dev-workflow.md
+      - Deployment & multiple plugins: shading.md
+  - Guides:
+      - Commands: commands.md
+      - Menus: menus.md
+      - Scoreboards: scoreboards.md
+      - Boss bars, tab list & holograms: displays.md
+      - Rich text: rich-text.md
+      - YAML & JSON files: data-files.md
+      - Config & messages: config-and-messages.md
+      - Database: database.md
+      - Player data: player-data.md
+      - Modules & services: modules.md
+      - Scheduler: scheduler.md
+      - Items: items.md
+      - Events & chat input: events-and-input.md
+      - Integrations: integrations.md
+      - Multi-version support: multi-version.md
+      - Utilities & hooks: utilities.md
+  - Reference:
+      - Cookbook: cookbook.md
+      - Architecture: architecture.md
+      - Compatibility & stability: compatibility.md
+      - FAQ: faq.md
+      - Javadoc: api/index.html

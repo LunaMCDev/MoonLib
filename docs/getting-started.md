@@ -40,7 +40,7 @@ A minimal `pom.xml` (the complete version is in [`example-plugin/pom.xml`](../ex
     <dependency>
         <groupId>dev.lunamc</groupId>
         <artifactId>moonlib</artifactId>
-        <version>1.2.0</version>
+        <version>1.4.0</version>
     </dependency>
 </dependencies>
 ```
@@ -175,6 +175,11 @@ Copy `target/MyPlugin-1.0.0.jar` into `plugins/` and start the server.
 
 ## Where next?
 
+- A test server with hot reload, so you rarely restart: [dev-workflow.md](dev-workflow.md)
+- Commands as annotated methods: [commands.md](commands.md#annotated-commands)
+- Storage: [database.md](database.md) and [player-data.md](player-data.md)
+- Structuring a big plugin: [modules.md](modules.md)
+- Gradients and formatting: [rich-text.md](rich-text.md)
 - Messages that server owners can translate: [config-and-messages.md](config-and-messages.md)
 - Writing code that works on 1.8 and 1.21: [multi-version.md](multi-version.md)
 - Async database work and Folia: [scheduler.md](scheduler.md)

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/LunaMCDev/MoonLib/tree/main/docs
+    about: Guides for every module, a cookbook and an FAQ.
+  - name: Security issue
+    url: https://github.com/LunaMCDev/MoonLib/security/advisories/new
+    about: Report vulnerabilities privately, not as a public issue.

@@ -96,6 +96,9 @@ public abstract class DataFile {
 
     private final Plugin plugin;
     private final File file;
+    /** Hash of the text this instance last wrote, so file watching can ignore our own saves. */
+    private volatile int lastWrittenHash;
+    private volatile boolean hasWritten;
     private final String resourceName;
     private boolean mergeDefaults = true;
 
@@ -232,7 +235,9 @@ public abstract class DataFile {
      */
     public synchronized boolean save() {
         try {
-            writeAtomically(file, serialize());
+            String text = serialize();
+            writeAtomically(file, text);
+            rememberWrite(text);
             return true;
         } catch (IOException e) {
             Log.error("Could not save " + file.getPath(), e);
@@ -255,6 +260,7 @@ public abstract class DataFile {
         Runnable write = () -> {
             try {
                 writeAtomically(file, snapshot);
+                rememberWrite(snapshot);
                 future.complete(null);
             } catch (IOException e) {
                 Log.error("Could not save " + file.getPath(), e);
@@ -883,6 +889,48 @@ public abstract class DataFile {
         } catch (IOException e) {
             Log.error("{} is invalid (backup failed). Problem: {}", fileName, cause.getMessage());
         }
+    }
+
+    private void rememberWrite(String text) {
+        lastWrittenHash = text.hashCode();
+        hasWritten = true;
+    }
+
+    /**
+     * Reloads this file automatically whenever it changes on disk (for example when a server owner
+     * saves it in an editor), then runs {@code afterReload} on the server thread. Changes made by
+     * this object's own {@link #save()} are ignored. A file with syntax errors is handled like any
+     * reload: the broken file is backed up and the previous values stay in use.
+     *
+     * <pre>{@code
+     * config.watch(this, () -> {
+     *     applySettings();
+     *     getLogger().info("config.yml reloaded");
+     * });
+     * }</pre>
+     *
+     * @param plugin      the owning plugin; watching stops when it shuts down MoonLib
+     * @param afterReload runs after each reload, may be {@code null}
+     * @return the watch, which can be closed to stop watching
+     * @since 1.4.0
+     */
+    public dev.lunamc.moonlib.util.FileWatcher.Watch watch(Plugin plugin, Runnable afterReload) {
+        return dev.lunamc.moonlib.util.FileWatcher.watch(plugin, file, () -> {
+            if (hasWritten && file.isFile()) {
+                try {
+                    String onDisk = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+                    if (onDisk.hashCode() == lastWrittenHash) {
+                        return;
+                    }
+                } catch (IOException e) {
+                    return;
+                }
+            }
+            reload();
+            if (afterReload != null) {
+                afterReload.run();
+            }
+        });
     }
 
     /**

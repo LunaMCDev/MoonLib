@@ -146,6 +146,102 @@ protected List<String> suggest(CommandContext ctx) {
 }
 ```
 
+## Annotated commands
+
+*Since 1.4.0.* Write a whole command tree as plain methods. MoonLib builds the same `MoonCommand`
+objects you would write by hand, so help pages, usage lines, messages and tab completion are
+identical, and annotated and hand-written commands can be mixed freely.
+
+```java
+@Command(value = "mine", aliases = "m", permission = "prison.mine", description = "Manage mines")
+public final class MineCommand {
+
+    private final MineManager mines;
+
+    public MineCommand(MineManager mines) {
+        this.mines = mines;
+    }
+
+    @Execute                                               // bare /mine
+    public String list(CommandSender sender) {
+        return "&7Mines: &f" + String.join(", ", mines.names());   // a returned String is sent
+    }
+
+    @Subcommand(value = "reset", aliases = "r", description = "Reset a mine")
+    @Cooldown(value = 10, unit = TimeUnit.SECONDS, bypass = "prison.mine.nocooldown")
+    public void reset(CommandSender sender,
+                      @Suggest("mineNames") @Arg("mine") String mine,
+                      @Arg(value = "delay", def = "0") @Range(min = 0, max = 300) int delay) {
+        mines.reset(mine, delay);
+    }
+
+    @Subcommand("tp")                                      // a Player first parameter = player-only
+    public void teleport(Player player, @Arg("mine") String mine) {
+        player.teleport(mines.spawn(mine));
+    }
+
+    @Subcommand(value = "admin setblocks", permission = "prison.mine.admin")   // nested: /mine admin setblocks
+    public boolean setBlocks(CommandSender sender, @Arg("mine") String mine,
+                             @Greedy @Arg("composition") String composition) {
+        return mines.setComposition(mine, composition);   // false shows the usage line
+    }
+
+    List<String> mineNames(CommandSender sender) {        // used by @Suggest("mineNames")
+        return mines.names();
+    }
+}
+
+// in enable():
+registerCommands(new MineCommand(mines));                  // MoonPlugin accepts handlers too
+// or: AnnotatedCommands.register(this, new MineCommand(mines));
+```
+
+### Annotations
+
+| Annotation | On | Meaning |
+|---|---|---|
+| `@Command(value, aliases, permission, description, playerOnly, hidden)` | class | The root command |
+| `@Execute` | method | Runs for the bare command (otherwise the help page is shown) |
+| `@Subcommand(value, aliases, permission, description, playerOnly, hidden)` | method | A subcommand; spaces in `value` nest (`"admin reset"`) |
+| `@Arg(value, optional, def, type)` | parameter | Argument name, optional flag, default (typed like a player would) and a named type |
+| `@Greedy` | `String` parameter | Takes the rest of the input, spaces included (last argument only) |
+| `@Range(min, max)` | number parameter | Bounds for `int`, `long`, `double` |
+| `@Suggest("method")` | parameter | Tab completions from `method()` or `method(CommandSender)` returning a `Collection<String>` |
+| `@Cooldown(value, unit, bypass)` | method or class | Per-player cooldown |
+
+### Parameters
+
+- A **first** parameter of type `CommandSender` or `Player` receives the sender. `Player` makes the
+  (sub)command player-only. A `CommandContext` parameter (anywhere) receives the context.
+- Every other parameter is an argument. Built in: `String`, `int`/`Integer`, `long`/`Long`,
+  `double`/`Double`, `boolean`/`Boolean`, `Player`, `OfflinePlayer`, `World`, `Material`, `UUID` and
+  every `enum`. Add your own:
+
+  ```java
+  AnnotatedCommands.registerType(Mine.class, ArgumentType.of(mines::byName, mines::names));
+  AnnotatedCommands.registerType("rank", ArgumentTypes.choice(ranks::names));   // @Arg(type = "rank")
+  ```
+
+- Without `@Arg`, an argument is named after the parameter, which needs the compiler flag
+  `-parameters` (the template plugin enables it). Otherwise it is called `arg0`, `arg1`...
+- An optional argument with no `def` receives `null`, so it must use a wrapper type (`Integer`,
+  not `int`).
+
+### Return values and errors
+
+| Return type | Effect |
+|---|---|
+| `void` | nothing |
+| `String` | sent to the sender (colour codes allowed) |
+| `boolean` | `false` shows the usage line |
+
+Throw `CommandError` to stop with a message. Any other exception is logged with the command line
+and the sender sees `internal-error`.
+
+Mistakes in the annotations are reported **when the command is built** (at startup), naming the
+class and method, for example: `MineCommand.reset() has optional primitive argument 'delay' with no
+default; use a wrapper type or set def`.
+
 ## Inline commands (`CommandBuilder`)
 
 ```java

@@ -16,7 +16,7 @@
 
     <groupId>dev.lunamc</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.0.0</version>
+    <version>1.4.0</version>
     <packaging>jar</packaging>
 
     <name>MoonLib</name>
@@ -108,6 +108,10 @@
                         </goals>
                         <configuration>
                             <rules>
+                                <requireMavenVersion>
+                                    <version>[3.6.3,)</version>
+                                    <message>MoonLib needs Maven 3.6.3 or newer. On JitPack, keep jitpack.yml in the repository root (it installs Maven 3.9.9).</message>
+                                </requireMavenVersion>
                                 <requireJavaVersion>
                                     <version>[21,)</version>
                                     <message>MoonLib must be built with JDK 21 or newer (the Spigot API it compiles against is Java 21 bytecode). The jar it produces still runs on Java 8. On JitPack, keep jitpack.yml with "jdk: openjdk21" in the repository root.</message>

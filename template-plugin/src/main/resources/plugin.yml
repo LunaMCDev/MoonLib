@@ -1,0 +1,20 @@
+name: ${project.name}
+version: ${project.version}
+main: com.example.template.TemplatePlugin
+# Lowest value Paper accepts; older servers ignore the key.
+api-version: '1.13'
+# MoonLib's scheduler, menus and commands are Folia-aware.
+folia-supported: true
+softdepend: [PlaceholderAPI, Vault]
+description: A starting point for MoonLib plugins.
+author: LunaMCDev
+
+# No commands section: MoonLib registers /template directly.
+
+permissions:
+  template.use:
+    description: Use /template and /template stats.
+    default: true
+  template.admin:
+    description: Reload, manage modules, spawn test holograms, see dev messages.
+    default: op

@@ -4,12 +4,16 @@ import dev.lunamc.moonlib.MoonContext;
 import dev.lunamc.moonlib.MoonLib;
 import dev.lunamc.moonlib.command.CommandBuilder;
 import dev.lunamc.moonlib.command.CommandRegistry;
+import dev.lunamc.moonlib.integration.MoonLink;
 import dev.lunamc.moonlib.util.Durations;
 import dev.lunamc.moonlib.util.Titles;
 import dev.lunamc.moonlib.version.ServerSoftware;
 import dev.lunamc.moonlib.version.ServerVersion;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The standalone MoonLib plugin. It initialises MoonLib so the library's shared listeners have a
@@ -44,6 +48,12 @@ public final class MoonLibStandalone extends JavaPlugin {
                                 "bundled", context.bundledVersion() == null ? "" : "bundles " + context.bundledVersion(),
                                 "uptime", Durations.format(uptime, 2),
                                 "commands", CommandRegistry.registered(plugin).size());
+                    }
+                    for (Map.Entry<String, Set<String>> entry : MoonLink.capabilities().entrySet()) {
+                        if (!entry.getValue().isEmpty()) {
+                            ctx.reply(" &8- &d{name} &7offers: &f{caps}", "name", entry.getKey(),
+                                    "caps", String.join(", ", entry.getValue()));
+                        }
                     }
                 })
                 .build());

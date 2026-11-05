@@ -2,6 +2,8 @@ package dev.lunamc.moonlib;
 
 import dev.lunamc.moonlib.command.CommandRegistry;
 import dev.lunamc.moonlib.input.ChatInput;
+import dev.lunamc.moonlib.integration.Integrations;
+import dev.lunamc.moonlib.integration.MoonLink;
 import dev.lunamc.moonlib.menu.MenuManager;
 import dev.lunamc.moonlib.scheduler.Tasks;
 import dev.lunamc.moonlib.scoreboard.BoardManager;
@@ -60,7 +62,7 @@ import java.util.function.Supplier;
 public final class MoonLib {
 
     /** The version of this copy of MoonLib. */
-    public static final String VERSION = "1.2.0";
+    public static final String VERSION = "1.4.0";
 
     private static final String PROPERTIES = "moonlib.properties";
     private static final List<MoonContext> CONTEXTS = new CopyOnWriteArrayList<>();
@@ -118,10 +120,21 @@ public final class MoonLib {
             return;
         }
         runAs(owner, () -> {
+            for (AutoCloseable resource : context.drainCloseables()) {
+                runQuietly(() -> {
+                    try {
+                        resource.close();
+                    } catch (Exception e) {
+                        throw new IllegalStateException("Could not close " + resource, e);
+                    }
+                });
+            }
             runQuietly(() -> MenuManager.shutdown(owner));
             runQuietly(() -> BoardManager.stopAll(owner));
             runQuietly(() -> ChatInput.shutdown(owner));
             runQuietly(() -> CommandRegistry.unregisterAll(owner));
+            runQuietly(() -> Integrations.shutdown(owner));
+            runQuietly(() -> MoonLink.shutdown(owner));
             runQuietly(() -> Tasks.shutdown(owner));
         });
         CONTEXTS.remove(context);

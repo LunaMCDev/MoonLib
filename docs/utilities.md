@@ -18,6 +18,8 @@ Text.repeat("=", 10);
 Text.nearestLegacy(0xFF8800);                  // ChatColor.GOLD
 ```
 
+For tag-based formatting (`<gradient:...>`, `<bold>`, placeholders) see [rich-text.md](rich-text.md).
+
 ## `Titles`
 
 See [multi-version.md](multi-version.md#titles-and-action-bars).
@@ -123,6 +125,41 @@ Log.debug("Break at {}", location);     // only printed in debug mode
 ```
 
 Output goes through your plugin's logger, so lines are prefixed with `[YourPlugin]`.
+
+## `FileWatcher`
+
+*Since 1.4.0.* Runs code when files change on disk, using the operating system's notifications (no
+polling). Changes are debounced by 300 ms and callbacks run on the server thread.
+
+```java
+FileWatcher.watch(this, new File(getDataFolder(), "rewards.yml"), rewards::reload);
+FileWatcher.watchFolder(this, new File(getDataFolder(), "mines"), changed -> mines.reload(changed));
+FileWatcher.watchTree(this, schematicsFolder, changed -> cache.invalidate(changed));   // includes subfolders
+
+FileWatcher.Watch watch = ...;
+watch.close();                   // stop early; all watches stop when the plugin shuts down
+```
+
+For MoonLib's own files prefer `file.watch(plugin, afterReload)`, which also ignores the plugin's
+own saves (see [config-and-messages.md](config-and-messages.md#reloading-automatically)).
+
+## `UpdateChecker`
+
+*Since 1.4.0.* Tells the console and staff when a newer version is published.
+
+```java
+UpdateChecker.modrinth(this, "moonprison")       // or spigot(this, 12345), github(this, "Owner/Repo"),
+        .notifyPermission("moonprison.admin")    //    hangar(this, "Owner/Slug")
+        .message("&d{plugin} &7{current} &8-> &a{latest} &8({url})")
+        .checkEvery(6, TimeUnit.HOURS)
+        .onUpdate(result -> metrics.flagOutdated(result.latest()))
+        .start();
+```
+
+Checks run off the server thread with 5-second timeouts; a network problem is logged at debug level
+and simply retried next time. Versions compare numerically (`1.10.0 > 1.9.2`), ignoring a leading
+`v`, and pre-releases sort before releases (`2.0.0-beta < 2.0.0`). Modrinth checks use the newest
+*release* (betas are skipped unless there is no release). `UpdateChecker.compare(a, b)` is public.
 
 ## PlaceholderAPI (`Placeholders`)
 

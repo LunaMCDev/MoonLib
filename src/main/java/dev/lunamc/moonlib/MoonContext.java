@@ -2,7 +2,11 @@ package dev.lunamc.moonlib;
 
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,6 +30,7 @@ public final class MoonContext {
     private final String bundledVersion;
     private final long initialisedAt = System.currentTimeMillis();
     private final Map<String, String> commandMessages = new ConcurrentHashMap<>();
+    private final Deque<AutoCloseable> closeables = new ArrayDeque<>();
     private volatile boolean debug;
 
     MoonContext(Plugin plugin, String bundledVersion) {
@@ -105,6 +110,44 @@ public final class MoonContext {
      */
     public Map<String, String> commandMessagesView() {
         return Collections.unmodifiableMap(commandMessages);
+    }
+
+    /**
+     * Registers a resource to close when this plugin shuts down MoonLib. Resources close in reverse
+     * order of registration (last in, first out), before MoonLib cancels the plugin's tasks, so a
+     * resource may still schedule a final save while closing.
+     *
+     * @param resource the resource
+     * @since 1.4.0
+     */
+    public void onShutdown(AutoCloseable resource) {
+        if (resource == null) {
+            return;
+        }
+        synchronized (closeables) {
+            closeables.push(resource);
+        }
+    }
+
+    /**
+     * Forgets a resource registered with {@link #onShutdown(AutoCloseable)}, for example because it
+     * was closed early.
+     *
+     * @param resource the resource
+     * @since 1.4.0
+     */
+    public void cancelShutdown(AutoCloseable resource) {
+        synchronized (closeables) {
+            closeables.remove(resource);
+        }
+    }
+
+    List<AutoCloseable> drainCloseables() {
+        synchronized (closeables) {
+            List<AutoCloseable> out = new ArrayList<>(closeables);
+            closeables.clear();
+            return out;
+        }
     }
 
     @Override

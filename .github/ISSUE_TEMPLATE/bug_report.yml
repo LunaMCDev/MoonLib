@@ -1,0 +1,49 @@
+name: Bug report
+description: Something in MoonLib does not work as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting! Please fill in as much as you can; a small reproduction helps most.
+  - type: input
+    id: moonlib
+    attributes:
+      label: MoonLib version
+      placeholder: "1.4.0"
+    validations:
+      required: true
+  - type: input
+    id: server
+    attributes:
+      label: Server software and version
+      description: The first line of /version
+      placeholder: "Paper 26.1.2 build 40"
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: How is MoonLib deployed?
+      options:
+        - Shaded and relocated
+        - Shaded without relocating (shared)
+        - Standalone plugin
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Code that shows the problem
+      render: java
+  - type: textarea
+    id: log
+    attributes:
+      label: Console output or stack trace
+      render: text

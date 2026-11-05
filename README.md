@@ -1,9 +1,13 @@
 # 🌙 MoonLib
 
 **A shadeable foundation for Bukkit, Spigot, Paper, Purpur and Folia plugins.**
-Commands, menus, scoreboards, multi-version support, a Folia-aware scheduler, configs, messages,
-items and the dozens of small helpers every plugin ends up rewriting. You shade it into each
-plugin and get straight to the parts that are actually yours.
+Commands (classic or annotated), menus, scoreboards, boss bars, holograms, rich text, SQL with
+migrations, safe per-player data, modules, multi-version support, a Folia-aware scheduler, configs
+that reload themselves, and the dozens of small helpers every plugin ends up rewriting. You shade
+it into each plugin and get straight to the parts that are actually yours.
+
+Starting a new plugin? Copy the [**template plugin**](template-plugin): a one-click IntelliJ test
+server where code changes apply **without restarting**.
 
 | | |
 |---|---|
@@ -12,6 +16,7 @@ plugin and get straight to the parts that are actually yours.
 | **Java** | Builds with JDK 21+, ships Java 8 bytecode (so it also loads on 1.8 servers) |
 | **Runtime dependencies** | None. PlaceholderAPI and Vault are optional soft hooks |
 | **Multiple plugins** | Any number per server: relocated, shared, or via the standalone plugin |
+| **Tests** | 112 unit tests plus multi-copy, cross-plugin and lifecycle harnesses |
 | **Licence** | MIT |
 
 ---
@@ -23,6 +28,7 @@ plugin and get straight to the parts that are actually yours.
 - [Quick start](#quick-start)
 - [A taste of every module](#a-taste-of-every-module)
 - [Documentation](#documentation)
+- [Template plugin & hot reload](#template-plugin--hot-reload)
 - [Project layout](#project-layout)
 - [Building](#building)
 
@@ -32,10 +38,16 @@ plugin and get straight to the parts that are actually yours.
 
 | Module | Package | What you get |
 |---|---|---|
-| **Core** | `dev.lunamc.moonlib` | `MoonPlugin` base class, multi-plugin support with per-plugin ownership, version checks |
+| **Core** | `dev.lunamc.moonlib` | `MoonPlugin` base class, multi-plugin support with per-plugin ownership, ordered shutdown of everything a plugin created |
 | **Commands** | `.command` | Subcommands, typed arguments, tab completion, permissions, cooldowns, auto help/usage. No `plugin.yml` entries |
+| **Annotated commands** | `.command.annotation` | A whole command tree as plain methods: `@Command`, `@Subcommand`, `@Arg`, `@Greedy`, `@Range`, `@Suggest`, `@Cooldown` |
 | **Menus** | `.menu` | Chest GUIs, visual layouts, pagination, confirm dialogs, auto-refresh, dupe-proof click handling |
 | **Scoreboards** | `.scoreboard` | Flicker-free per-player sidebars, a manager with a provider and update timer |
+| **Displays** | `.display` | Boss bars with countdowns, tab header/footer and names, holograms (text displays on 1.19.4+, armor stands before) |
+| **Rich text** | `.util.RichText` | MiniMessage-style `<gradient>`, `<rainbow>`, `<#hex>`, `<bold>`, safe placeholders, on every version without Adventure |
+| **Database** | `.database` | SQLite / MySQL / MariaDB with a built-in pool, async queries, transactions, versioned migrations, dialect-aware upserts. No dependency |
+| **Player data** | `.player` | `PlayerCache`: load before join, save on quit/autosave/shutdown, safe against failed loads and quick rejoins |
+| **Modules** | `.module` | Split a plugin into toggleable features with dependency order, isolated failures, automatic cleanup and a service registry |
 | **Multi-version** | `.version` | Version/software detection, modern material, sound and enchantment names on every version, reflection helpers |
 | **Scheduler** | `.scheduler` | One API for Bukkit and **Folia** (global, async, entity and region tasks), `CompletableFuture` helpers |
 | **Items** | `.item` | `ItemBuilder`, custom-texture heads, persistent item tags, inventory counting/removal, base64 serialisation |
@@ -43,7 +55,8 @@ plugin and get straight to the parts that are actually yours.
 | **Events** | `.event` | Lambda listeners with filters, priorities and auto-expiry |
 | **Chat input** | `.input` | Ask a player to type something, with validation, timeout and cancel |
 | **Hooks** | `.hook` | PlaceholderAPI and Vault economy, with no compile-time dependency |
-| **Utilities** | `.util` | Colours (hex and gradients), titles/action bars, durations, numbers, cooldowns, locations, cuboids, players, logging |
+| **Integrations** | `.integration` | Detect other plugins and link up automatically (`Integrations`), and call each other's features and events with no API jar (`MoonLink`) |
+| **Utilities** | `.util` | Colours, titles/action bars, durations, numbers, cooldowns, locations, cuboids, players, logging, **file watching**, **update checks** (Modrinth, Spigot, GitHub, Hangar) |
 
 ---
 
@@ -69,7 +82,7 @@ tells JitPack to build with JDK 21):
 <dependency>
     <groupId>com.github.LunaMCDev</groupId>
     <artifactId>MoonLib</artifactId>
-    <version>1.2.0</version>   <!-- a release tag, a commit hash, or main-SNAPSHOT -->
+    <version>1.4.0</version>   <!-- a release tag, a commit hash, or main-SNAPSHOT -->
 </dependency>
 ```
 
@@ -86,7 +99,7 @@ of these modes; see [docs/shading.md](docs/shading.md). The relocated setup:
 <dependency>
     <groupId>dev.lunamc</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.2.0</version>
+    <version>1.4.0</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -255,6 +268,55 @@ Tasks.supplyAsync(() -> database.load(uuid))
 TaskHandle reset = Tasks.timer(0, 20 * 60, mines::resetAll);
 ```
 
+### Annotated commands
+
+```java
+@Command(value = "mine", permission = "prison.mine")
+public final class MineCommand {
+    @Subcommand("reset")
+    public String reset(CommandSender sender, @Suggest("mines") @Arg("mine") String mine,
+                        @Arg(value = "delay", def = "0") @Range(min = 0, max = 300) int delay) {
+        mines.reset(mine, delay);
+        return "&aResetting &f" + mine;
+    }
+
+    List<String> mines(CommandSender sender) { return mineManager.names(); }
+}
+```
+
+### Rich text, boss bars & holograms
+
+```java
+player.sendMessage(RichText.parse("<gradient:#7F7FD5:#91EAE4><bold>MOON PRISON</bold></gradient> <gray>Hi <name>!",
+        "name", player.getName()));                          // values can't inject tags
+Bar.countdown(player, 30, s -> "&eEvent in &f" + s + "s", Bar.Color.YELLOW);
+Hologram top = Hologram.create(spawn, "&d&lTOP MINERS", "&f1. Luna &7- &e1.2M");
+```
+
+### Database & player data
+
+```java
+Database db = Database.fromConfig(this, loadConfig("config.yml"), "database");   // sqlite or mysql, owner's choice
+db.migrations().add(1, "balances", "CREATE TABLE balances (uuid CHAR(36) PRIMARY KEY, tokens BIGINT)").run();
+
+PlayerCache<Balance> balances = PlayerCache.<Balance>builder(this)
+        .loader((id, name) -> db.queryOne("SELECT * FROM balances WHERE uuid = ?", Balance::fromRow, id)
+                .orElseGet(Balance::new))
+        .saver((id, b) -> db.update(db.dialect().upsert("balances", "uuid", "tokens"), id, b.tokens))
+        .build();
+
+balances.get(player).tokens += 10;                          // loaded before join, saved automatically
+```
+
+### Modules
+
+```java
+modules = new ModuleManager(this)
+        .toggles(loadConfig("config.yml"), "modules")                  // modules.<id>: false switches one off
+        .register(new EconomyModule(), new MinesModule(), new RanksModule());
+modules.enableAll();                                          // dependency order; one failing module never stops the rest
+```
+
 ### Multiple plugins
 
 ```java
@@ -262,6 +324,17 @@ TaskHandle reset = Tasks.timer(0, 20 * 60, mines::resetAll);
 MoonLib.mode();                                    // ISOLATED or SHARED
 MoonLib.plugins();                                 // everyone using this copy
 MoonLib.runAs(plugin, () -> Tasks.timer(0, 20, tick)); // explicit ownership, when you need it
+```
+
+### Plugins that work together
+
+```java
+// MoonCrates offers a feature...
+MoonLink.provide("crates:give-key", payload -> { /* give the key */ return true; });
+
+// ...MoonQuests uses it whenever MoonCrates is installed, without depending on it
+Integrations.when("MoonCrates", crates -> rewards.register("crate-key", (player, crate) ->
+        MoonLink.call("crates:give-key", MoonLink.payload("player", player, "crate", crate, "amount", 1))));
 ```
 
 ### Items, config, events, input & utilities
@@ -295,20 +368,52 @@ new Cuboid(pos1, pos2).fill(composition);
 | Guide | Covers |
 |---|---|
 | [Getting started](docs/getting-started.md) | Setup, project structure, your first command and menu |
+| [Development workflow](docs/dev-workflow.md) | Local test server, hot reload in IntelliJ, how it works |
 | [Deployment & multiple plugins](docs/shading.md) | Relocated, shared and standalone modes, how sharing works, Maven/Gradle configs, troubleshooting |
-| [Commands](docs/commands.md) | `MoonCommand`, `CommandBuilder`, arguments, custom types, messages |
+| [Commands](docs/commands.md) | `MoonCommand`, annotated commands, `CommandBuilder`, arguments, custom types, messages |
 | [Menus](docs/menus.md) | `Menu`, layouts, `PaginatedMenu`, `ConfirmMenu`, safety guarantees |
 | [Scoreboards](docs/scoreboards.md) | `Board`, `BoardManager`, limits per version |
+| [Boss bars, tab list & holograms](docs/displays.md) | `Bar`, `TabList`, `Hologram` |
+| [Rich text](docs/rich-text.md) | `RichText` tags, placeholders, safety, version fallback |
 | [Multi-version support](docs/multi-version.md) | How MoonLib stays compatible, and how to write compatible code yourself |
 | [Scheduler](docs/scheduler.md) | `Tasks`, Folia, async patterns |
 | [Items](docs/items.md) | `ItemBuilder`, `Skulls`, `ItemTags`, `Items` |
 | [YAML & JSON files](docs/data-files.md) | `DataFile`, `YamlFile`, `JsonFile`, `DataStore`, storing your own classes |
-| [Config & messages](docs/config-and-messages.md) | `ConfigFile`, `Messages`, translating built-in messages |
+| [Config & messages](docs/config-and-messages.md) | `ConfigFile`, `Messages`, auto-reload, translating built-in messages |
+| [Database](docs/database.md) | `Database`, queries, async, transactions, migrations, dialects, tuning |
+| [Player data](docs/player-data.md) | `PlayerCache` and its guarantees |
+| [Modules & services](docs/modules.md) | `MoonModule`, `ModuleManager`, `Services` |
 | [Events & chat input](docs/events-and-input.md) | `Events`, `ChatInput` |
-| [Utilities & hooks](docs/utilities.md) | `Text`, `Titles`, `Durations`, `Numbers`, `Cooldown`, `Locations`, `Cuboid`, `Players`, `Log`, PlaceholderAPI, Vault |
+| [Integrations](docs/integrations.md) | `Integrations`, `MoonLink`: detecting plugins and making them work together |
+| [Utilities & hooks](docs/utilities.md) | `Text`, `Titles`, `Durations`, `Numbers`, `Cooldown`, `Locations`, `Cuboid`, `Players`, `Log`, `FileWatcher`, `UpdateChecker`, PlaceholderAPI, Vault |
+| [Cookbook](docs/cookbook.md) | Complete recipes combining several modules |
+| [Architecture](docs/architecture.md) | How MoonLib works inside: ownership, shutdown order, threads, versions |
+| [Compatibility & stability](docs/compatibility.md) | Feature availability per version, semantic versioning, what counts as API |
+| [FAQ](docs/faq.md) | Common questions |
 
-Every public class and method also has full Javadoc. Generate the HTML with `mvn -P release package`
-(output in `target/apidocs`) or just hover in your IDE.
+Every public class and method also has full Javadoc, with `@since` on everything added after 1.0.
+Generate the HTML with `mvn -P release package` (output in `target/apidocs`) or just hover in your
+IDE. The guides also build into a searchable site with `mkdocs serve` (see `mkdocs.yml`); the
+`docs` GitHub workflow publishes the site and Javadoc to GitHub Pages.
+
+---
+
+## Template plugin & hot reload
+
+[`template-plugin/`](template-plugin) is a complete plugin to copy for new projects. It comes with:
+
+- **Setup Dev Server**: downloads the newest stable Paper (PaperMC Fill API, checksum-verified)
+  into `run/`;
+- **Dev Server**: builds the plugin into the server and starts it under the debugger;
+- **edit → Build → done**: IntelliJ hot-swaps your classes (JetBrains Runtime allows adding
+  methods and fields too) and the template re-enables its modules with the new code, so you
+  never restart for most changes;
+- config and messages that reload when you save them;
+- example modules (stats, welcome titles and boss bar, sidebar), an annotated command, a menu,
+  SQLite storage with migrations and a player cache.
+
+Step-by-step setup: [template-plugin/README.md](template-plugin/README.md). How it works:
+[docs/dev-workflow.md](docs/dev-workflow.md).
 
 ---
 
@@ -321,8 +426,13 @@ MoonLib/
 │   ├── MoonLib.java              lifecycle (init / shutdown)
 │   ├── MoonPlugin.java           JavaPlugin base class
 │   ├── command/                  command framework
+│   │   └── annotation/           @Command, @Subcommand, @Arg ...
 │   ├── menu/                     inventory GUIs
 │   ├── scoreboard/               sidebars
+│   ├── display/                  boss bars, tab list, holograms
+│   ├── database/                 SQL, pool, transactions, migrations
+│   ├── player/                   per-player data cache
+│   ├── module/                   modules and services
 │   ├── version/                  version detection + cross-version lookups
 │   │   └── adapter/              internal per-version implementations
 │   ├── scheduler/                Bukkit / Folia scheduler
@@ -331,11 +441,15 @@ MoonLib/
 │   ├── event/                    functional listeners
 │   ├── input/                    chat prompts
 │   ├── hook/                     PlaceholderAPI, Vault
+│   ├── integration/              plugin detection, MoonLink cross-plugin calls and events
 │   └── util/                     everything else
 ├── src/test/java/                unit tests (JUnit 5)
 ├── docs/                         guides
 ├── example-plugin/               a complete plugin that shades MoonLib
-└── standalone-plugin/            MoonLib as an installable plugin (shared by dependants)
+├── template-plugin/              starter project with dev server and hot reload
+├── standalone-plugin/            MoonLib as an installable plugin (shared by dependants)
+├── .github/                      CI, docs publishing, issue/PR templates
+└── mkdocs.yml                    documentation site
 ```
 
 ---
@@ -357,6 +471,11 @@ mvn clean install -Dspigot.version=1.21.1-R0.1-SNAPSHOT
 ```
 
 ---
+
+## Contributing
+
+Bug reports, ideas and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
+build, test and style rules, and [SECURITY.md](SECURITY.md) to report a vulnerability privately.
 
 ## Licence
 

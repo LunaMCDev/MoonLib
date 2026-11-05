@@ -76,9 +76,26 @@ messages.reload();
 ```
 
 - `{prefix}` is available in every message.
+- Rich-text tags (`<gradient:#7F7FD5:#91EAE4>`, `<bold>`, `<#ff8800>`...) work after
+  `messages.useRichText(true)` or with `rich-text: true` at the top of the file. Placeholder values
+  are escaped, so a player name can never inject formatting. See [rich-text.md](rich-text.md).
 - A missing key shows `Missing message: key` and logs one warning, rather than throwing.
 - PlaceholderAPI placeholders are applied for player recipients when PAPI is installed
   (`usePlaceholderApi(false)` to disable).
+
+## Reloading automatically
+
+*Since 1.4.0.* Any MoonLib file can reload itself when it changes on disk, so server owners (and you,
+while developing) see edits the moment they save:
+
+```java
+settings.watch(this, this::applySettings);                       // ConfigFile, YamlFile or JsonFile
+messages.file().watch(this, () -> getLogger().info("messages.yml reloaded"));
+```
+
+Writes made by the plugin's own `save()` are ignored, edits are debounced (an editor saving three
+times in a row causes one reload), and a file with a syntax error is backed up while the previous
+values stay in use, as with any reload. Watching stops when the plugin shuts down.
 
 ## Translating MoonLib's own messages
 

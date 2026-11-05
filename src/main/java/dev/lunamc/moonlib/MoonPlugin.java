@@ -158,6 +158,24 @@ public abstract class MoonPlugin extends JavaPlugin {
     }
 
     /**
+     * Registers commands that may be a mix of {@link MoonCommand}s and annotated handlers (instances
+     * of classes marked {@link dev.lunamc.moonlib.command.annotation.Command @Command}).
+     *
+     * @param commands the commands and handlers to register
+     * @see dev.lunamc.moonlib.command.annotation.AnnotatedCommands
+     * @since 1.4.0
+     */
+    protected final void registerCommands(Object... commands) {
+        for (Object command : commands) {
+            if (command instanceof MoonCommand) {
+                CommandRegistry.register(this, (MoonCommand) command);
+            } else {
+                dev.lunamc.moonlib.command.annotation.AnnotatedCommands.register(this, command);
+            }
+        }
+    }
+
+    /**
      * Loads (creating it from the jar's resource if missing) a YAML file in the data folder.
      *
      * @param name the file name relative to the data folder, e.g. {@code "mines.yml"} or {@code "data/ranks.yml"}

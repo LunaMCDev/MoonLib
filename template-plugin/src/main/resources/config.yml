@@ -1,0 +1,47 @@
+# MoonTemplate configuration.
+# This file reloads by itself when you save it; no restart or command needed.
+
+debug: false
+
+# Turn features on or off. New modules are added here automatically as true.
+modules:
+  stats: true
+  welcome: true
+  sidebar: true
+
+# Storage. sqlite needs no setup; switch to mysql or mariadb for networks.
+database:
+  type: sqlite
+  file: data.db
+  host: localhost
+  port: 3306
+  name: moontemplate
+  username: root
+  password: ''
+  pool-size: 0          # 0 = automatic (1 for SQLite, 8 for MySQL)
+
+storage:
+  autosave-minutes: 5
+
+welcome:
+  title: "<gradient:#7F7FD5:#91EAE4><bold>WELCOME</bold></gradient>"
+  subtitle: "<gray>Good to see you, <white><player>"
+  bossbar-seconds: 10   # 0 to turn the boss bar off
+
+# Rich-text tags work here: <gradient:#a:#b>, <rainbow>, <#ff8800>, <bold> ...
+# Placeholders: <player> <online> <joins> <blocks>, plus PlaceholderAPI %placeholders%.
+sidebar:
+  update-ticks: 20
+  title: "<light_purple><bold>MOON TEMPLATE"
+  lines:
+    - ""
+    - "<gray>Player: <white><player>"
+    - "<gray>Joins: <yellow><joins>"
+    - "<gray>Blocks: <aqua><blocks>"
+    - ""
+    - "<gray>Online: <green><online>"
+    - "<dark_gray>edit config.yml live!"
+
+# Leave empty to skip update checks.
+update-check:
+  modrinth-project: ''

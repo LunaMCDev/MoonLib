@@ -3,7 +3,7 @@
   The standalone MoonLib plugin: one shared copy of MoonLib installed in plugins/.
 
   Build:  (in the MoonLib folder) mvn clean install   then   (here) mvn clean package
-  Output: target/MoonLib-1.2.0.jar
+  Output: target/MoonLib-1.4.0.jar
 
   Plugins that use it add  depend: [MoonLib]  to their plugin.yml and use MoonLib with
   <scope>provided</scope> instead of shading it. See docs/shading.md.
@@ -18,7 +18,7 @@
 
     <groupId>dev.lunamc</groupId>
     <artifactId>moonlib-plugin</artifactId>
-    <version>1.2.0</version>
+    <version>1.4.0</version>
     <packaging>jar</packaging>
     <name>MoonLib</name>
 

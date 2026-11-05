@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  MoonTemplate: a starting point for a new plugin built on MoonLib.
+
+  Rename it in three places: <groupId>/<artifactId>/<name> below, the package
+  com.example.template, and plugin.yml. Everything else follows from these.
+
+  Builds
+    mvn package                    release jar in target/, MoonLib relocated into your package
+    mvn package -Pdev              dev jar written straight into run/plugins/ (used by the
+                                   "Dev Server" run configuration; MoonLib not relocated so
+                                   IntelliJ can hot-swap your classes)
+    mvn validate -Psetup-server    downloads Paper into run/ (once)
+
+  See README.md for the IntelliJ workflow.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>moon-template</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>MoonTemplate</name>
+
+    <properties>
+        <!-- Bytecode level of your plugin. 21 runs on every server from 1.20.5 up (26.x needs a Java 25
+             runtime, which still runs Java 21 bytecode). Use 8 to also support 1.8-1.16 servers. -->
+        <java.release>21</java.release>
+        <maven.compiler.release>${java.release}</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- MoonLib from GitHub through JitPack. To use a local build instead (after `mvn install` in
+             the MoonLib folder), pass -Dmoonlib.groupId=dev.lunamc -Dmoonlib.artifactId=moonlib
+             or change these two lines. -->
+        <moonlib.groupId>com.github.LunaMCDev</moonlib.groupId>
+        <moonlib.artifactId>MoonLib</moonlib.artifactId>
+        <moonlib.version>1.4.0</moonlib.version>
+        <spigot.version>1.21.4-R0.1-SNAPSHOT</spigot.version>
+
+        <!-- Where your plugin's copy of MoonLib lives in release builds. Keep it inside your package. -->
+        <relocation.package>com.example.template.libs.moonlib</relocation.package>
+
+        <!-- The local test server. "latest" picks the newest Paper version with a stable build;
+             or pin one, e.g. 1.21.4 or 26.1.2. -->
+        <dev.paper.version>latest</dev.paper.version>
+        <dev.server.dir>${project.basedir}/run</dev.server.dir>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${spigot.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>${moonlib.groupId}</groupId>
+            <artifactId>${moonlib.artifactId}</artifactId>
+            <version>${moonlib.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.name}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>   <!-- fills ${project.version} etc. in plugin.yml -->
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <!-- Keeps parameter names, so @Arg can be left out on annotated commands. -->
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- ============================================================ release (default) -->
+        <profile>
+            <id>release</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals><goal>shade</goal></goals>
+                                <configuration>
+                                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                                    <minimizeJar>false</minimizeJar>
+                                    <relocations>
+                                        <relocation>
+                                            <pattern>dev.lunamc.moonlib</pattern>
+                                            <shadedPattern>${relocation.package}</shadedPattern>
+                                        </relocation>
+                                    </relocations>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/MANIFEST.MF</exclude>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                                <exclude>META-INF/maven/**</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- ============================================================ dev -->
+        <!-- Builds into the test server and leaves MoonLib unrelocated. Relocation rewrites every
+             reference to MoonLib inside your classes, so the classes IntelliJ compiles would no
+             longer match the ones in the jar and hot-swapping them would fail. -->
+        <profile>
+            <id>dev</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals><goal>shade</goal></goals>
+                                <configuration>
+                                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                                    <outputFile>${dev.server.dir}/plugins/${project.name}.jar</outputFile>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/MANIFEST.MF</exclude>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- ============================================================ setup-server -->
+        <!-- mvn validate -Psetup-server  (add -Ddev.paper.version=1.21.4 to pick a version,
+             -Ddev.force=true to download again) -->
+        <profile>
+            <id>setup-server</id>
+            <properties>
+                <dev.force>false</dev.force>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>setup-dev-server</id>
+                                <phase>validate</phase>
+                                <goals><goal>exec</goal></goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <arguments>
+                                        <argument>${project.basedir}/tools/DevServer.java</argument>
+                                        <argument>setup</argument>
+                                        <argument>--dir=${dev.server.dir}</argument>
+                                        <argument>--version=${dev.paper.version}</argument>
+                                        <argument>--force=${dev.force}</argument>
+                                        <argument>--plugin=${project.name}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

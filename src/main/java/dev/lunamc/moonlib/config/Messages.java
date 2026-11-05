@@ -50,6 +50,7 @@ public class Messages {
     private final ConfigFile file;
     private final Set<String> warnedMissing = ConcurrentHashMap.newKeySet();
     private boolean placeholderApi = true;
+    private boolean richText;
 
     /**
      * Loads {@code messages.yml}.
@@ -81,6 +82,21 @@ public class Messages {
         return this;
     }
 
+    /**
+     * Formats messages with {@link dev.lunamc.moonlib.util.RichText} tags such as
+     * {@code <gradient:#7F7FD5:#91EAE4>} and {@code <bold>}, in addition to {@code &} codes.
+     * Placeholder values are escaped, so a player name or chat message can never inject tags.
+     * Off by default. Setting {@code rich-text: true} at the top of the file also turns it on.
+     *
+     * @param enabled {@code true} to format rich-text tags
+     * @return this instance
+     * @since 1.4.0
+     */
+    public Messages useRichText(boolean enabled) {
+        this.richText = enabled;
+        return this;
+    }
+
     /** Reloads the file from disk and forgets which missing keys have been reported. */
     public void reload() {
         file.reload();
@@ -109,10 +125,24 @@ public class Messages {
         List<String> raw = raw(key);
         List<String> out = new ArrayList<>(raw.size());
         String prefix = file.getString("prefix", "");
+        boolean rich = richText || file.getBoolean("rich-text", false);
+        Object[] values = rich ? escapeValues(placeholders) : placeholders;
         for (String line : raw) {
-            out.add(Text.color(Text.replace(line.replace("{prefix}", prefix), placeholders)));
+            String filled = Text.replace(line.replace("{prefix}", prefix), values);
+            out.add(rich ? dev.lunamc.moonlib.util.RichText.parse(filled) : Text.color(filled));
         }
         return out;
+    }
+
+    private static Object[] escapeValues(Object[] pairs) {
+        if (pairs == null) {
+            return null;
+        }
+        Object[] copy = pairs.clone();
+        for (int i = 1; i < copy.length; i += 2) {
+            copy[i] = dev.lunamc.moonlib.util.RichText.escape(String.valueOf(copy[i]));
+        }
+        return copy;
     }
 
     /**
