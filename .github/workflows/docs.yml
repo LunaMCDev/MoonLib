@@ -35,14 +35,14 @@ jobs:
           python-version: '3.12'
 
       - name: Build Javadoc
-        run: mvn -B -ntp -P release -DskipTests package javadoc:javadoc
+        run: mvn -B -ntp -P release -DskipTests package
 
       - name: Build guides
         run: |
           pip install "mkdocs<2" mkdocs-material
           mkdocs build
           mkdir -p site/api
-          cp -r target/site/apidocs/. site/api/
+          cp -r target/apidocs/. site/api/
 
       - uses: actions/upload-pages-artifact@v3
         with:

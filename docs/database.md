@@ -1,6 +1,6 @@
 # Database
 
-*Since 1.1.1-alpha.* `Database` gives a plugin SQL storage with a connection pool, prepared statements,
+*Since 1.2.0.* `Database` gives a plugin SQL storage with a connection pool, prepared statements,
 transactions, migrations and asynchronous queries, **with no extra dependency**: Spigot, Paper
 and their forks already ship the SQLite and MySQL JDBC drivers.
 

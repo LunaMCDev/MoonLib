@@ -1,16 +1,43 @@
 # Development workflow: test server and hot reload
 
 The fastest way to build a plugin is to never restart the server. The
-[template plugin](../template-plugin) sets this up in IntelliJ IDEA:
+[template plugin](https://github.com/LunaMCDev/MoonLib-Template) and the [example plugin](https://github.com/LunaMCDev/MoonLib-Example) both set this up in
+IntelliJ IDEA:
 
-1. **Debug** the *Dev Server* run configuration: Maven builds your plugin straight into a local
-   Paper server's `plugins/` folder and starts it.
+1. **Debug** the *Dev Server* run configuration: the Ant `dev` target builds your plugin straight
+   into a local Paper server's `plugins/` folder, and the server starts in IntelliJ's console.
 2. Edit code and press **Build** (`Ctrl+F9`): IntelliJ hot-swaps the changed classes into the running
    server, and the template's `DevMode` re-enables your modules with the new code.
 3. Edit `config.yml` or `messages.yml` in the server folder: they reload on save.
 
-The template's [README](../template-plugin/README.md) has the step-by-step setup. This page explains
+The template's [README](https://github.com/LunaMCDev/MoonLib-Template#readme) has the step-by-step setup. This page explains
 how it works, so you can add it to an existing plugin.
+
+## The Ant build
+
+Each plugin has a `build.xml` that reads **everything from `pom.xml`**: the plugin name and version,
+the Java level, the Paper version for the test server, and the dependencies (resolved from Maven
+Central, the Spigot repository and JitPack by the Maven Resolver Ant Tasks, downloaded once into
+`.ant/`). So the pom stays the single place to configure the plugin, and Maven and Ant always agree.
+
+| Target | Does |
+|---|---|
+| `setup-server` | Downloads Paper into `run/` (runs `tools/DevServer.java`) |
+| `dev` (default) | Compiles, filters `plugin.yml`, bundles MoonLib (unrelocated) and writes `run/plugins/<Name>.jar` |
+| `run` | `dev`, then starts the server with JetBrains Runtime flags and a debug port (5005) |
+| `clean` | Deletes `build/` |
+
+Three ways to work, all with hot swap:
+
+| Start with | Build | Hot swap via |
+|---|---|---|
+| **Dev Server** run configuration (Debug) | Ant `dev`, automatically | IntelliJ's debugger, directly |
+| **Dev Server (Maven)** run configuration (Debug) | Maven `package -Pdev`, automatically | IntelliJ's debugger, directly |
+| Ant `run` target, then **Attach Debugger** (Debug) | Ant `dev` | the attached debugger (port 5005) |
+
+Release jars still come from Maven (`mvn clean package`), because relocating MoonLib into your
+package needs the Maven shade plugin. Local overrides such as `debug.port=5006` or
+`server.memory=4G` go in a git-ignored `build.local.properties`.
 
 ## How the pieces fit
 
@@ -33,9 +60,9 @@ still starts on a normal JDK (with body-only swapping).
 
 ### 2. Why the dev build does not relocate MoonLib
 
-Relocation rewrites every reference to `dev.lunamc.moonlib` inside *your* classes. IntelliJ compiles
+Relocation rewrites every reference to `com.lunamcdev.moonlib` inside *your* classes. IntelliJ compiles
 the unrelocated versions, so swapping them into a relocated jar would point at classes that do not
-exist. The `dev` Maven profile therefore shades MoonLib without relocating. MoonLib's
+exist. The Ant `dev` target and the `dev` Maven profile therefore bundle MoonLib without relocating. MoonLib's
 [shared mode](shading.md) makes that safe. Release builds still relocate.
 
 ### 3. Re-running setup code

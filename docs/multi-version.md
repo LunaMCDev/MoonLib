@@ -1,6 +1,6 @@
 # Multi-version support
 
-Package: `dev.lunamc.moonlib.version`
+Package: `com.lunamcdev.moonlib.version`
 
 MoonLib supports **1.8.8 to the latest release**, including the year-based versions (26.1, 26.2 ...).
 One compiled jar runs on all of them.

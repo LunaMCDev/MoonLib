@@ -16,7 +16,7 @@ Re-run this whenever you change or update MoonLib.
 
 ## 2. Create your plugin project
 
-A minimal `pom.xml` (the complete version is in [`example-plugin/pom.xml`](../example-plugin/pom.xml)):
+A minimal `pom.xml` (the complete version is in [MoonLib-Example's `pom.xml`](https://github.com/LunaMCDev/MoonLib-Example/blob/main/pom.xml)):
 
 ```xml
 <properties>
@@ -38,16 +38,15 @@ A minimal `pom.xml` (the complete version is in [`example-plugin/pom.xml`](../ex
         <scope>provided</scope>
     </dependency>
     <dependency>
-        <groupId>dev.lunamc</groupId>
+        <groupId>com.lunamcdev</groupId>
         <artifactId>moonlib</artifactId>
-        <version>1.1.1-alpha</version>
+        <version>1.2.0-beta</version>
     </dependency>
 </dependencies>
 ```
 
 Then add the shade plugin with a relocation, exactly as shown in [shading.md](shading.md). (Relocating
-is recommended but optional: several plugins can also share one copy, or depend on the standalone
-MoonLib plugin. The same page explains all three setups.)
+is recommended but optional: several plugins can also share one copy. The same page explains both setups.)
 
 > **Paper API instead of Spigot API?** That works too: depend on `io.papermc.paper:paper-api` as
 > `provided`. MoonLib itself only needs the Spigot API surface.
@@ -70,7 +69,7 @@ No `commands:` section is needed. MoonLib registers commands directly.
 ```java
 package me.you.myplugin;
 
-import dev.lunamc.moonlib.MoonPlugin;
+import com.lunamcdev.moonlib.MoonPlugin;
 
 public final class MyPlugin extends MoonPlugin {
 

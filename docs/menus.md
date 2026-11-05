@@ -1,6 +1,6 @@
 # Menus
 
-Package: `dev.lunamc.moonlib.menu`
+Package: `com.lunamcdev.moonlib.menu`
 
 ## The basics
 

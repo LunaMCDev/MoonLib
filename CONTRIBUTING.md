@@ -15,10 +15,10 @@ mvn -P release package         # also sources + Javadoc (Javadoc lint must pass)
 
 The library compiles to **Java 8 bytecode** (`--release 8`) so it loads on 1.8 servers. That means
 no `var`, records, switch expressions, `List.of`, `String#isBlank` and so on in `src/main`.
-The template plugin (`template-plugin/`) targets Java 21 and may use modern Java.
 
-When a new Minecraft version comes out, bump `spigot.version` in all four poms and
-`dev.paper.version` in the template, add a `ServerVersion` constant, and update the version the test
+
+When a new Minecraft version comes out, bump `spigot.version` in `pom.xml` (and in the
+MoonLib-Example and MoonLib-Template repositories, with their `dev.paper.version`), add a `ServerVersion` constant, and update the version the test
 harnesses report.
 
 ## Tests
@@ -70,14 +70,18 @@ harnesses report.
 
 - One topic per pull request; keep refactors separate from features.
 - Fill in the checklist in the PR template.
-- CI builds and tests on JDK 25, builds the example, standalone and template plugins, and
+- CI builds and tests on JDK 25 and
   lints the Javadoc.
 
 ## Releasing (maintainers)
 
-1. Move `Unreleased` entries in the changelog to a new version heading.
-2. Bump `<version>` in `pom.xml`, `MoonLib.VERSION`, the example/standalone/template poms and the
-   README/docs install snippets.
-3. Tag the commit with the bare version (`1.1.1-alpha`) and push the tag. The release workflow checks the
+1. Set the version once: `java tools/SetVersion.java 1.3.0-beta` (or `ant set-version`, which asks for
+   it). This changes `pom.xml` and every other place in this repository that shows the version: the
+   install snippets in the README and docs, `SECURITY.md` and the
+   bug-report template. `MoonLib.VERSION` is filled in from `pom.xml` at build time. CI runs
+   `java tools/SetVersion.java --check` and fails if anything drifts.
+2. Move `Unreleased` entries in the changelog to a heading for the new version.
+3. Tag the commit with the bare version (`1.2.0-beta`) and push the tag. The release workflow checks the
    tag matches the pom, builds the jars and creates the GitHub release; JitPack builds the tag on
    first request.
+4. After JitPack has built the tag, bump `<moonlib.version>` in MoonLib-Example and MoonLib-Template.

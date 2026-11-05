@@ -3,7 +3,7 @@
 ### Should I relocate MoonLib?
 
 Yes, for anything you publish. Relocation gives your plugin a private copy, so another plugin can
-never load a different MoonLib version under you. Shared and standalone modes are there for your own
+never load a different MoonLib version under you. Shared mode is there for your own
 plugin suites. See [shading.md](shading.md).
 
 ### Can I write my plugin in Kotlin?
@@ -58,5 +58,5 @@ Pages enabled (the `docs` workflow publishes it).
 
 ### How do I get changes to show up without restarting my test server?
 
-Use the [template plugin](../template-plugin) and its *Dev Server* run configuration: build in
+Use the [template plugin](https://github.com/LunaMCDev/MoonLib-Template) and its *Dev Server* run configuration: build in
 IntelliJ and the running server picks up your code. See [dev-workflow.md](dev-workflow.md).

@@ -8,7 +8,7 @@ promptly when an advisory is published.
 
 | Version | Supported |
 |---|---|
-| 1.4.x | ✅ |
+| 1.2.x | ✅ |
 | < 1.4 | ❌ (please upgrade; there are no breaking changes within 1.x) |
 
 ## Reporting a vulnerability

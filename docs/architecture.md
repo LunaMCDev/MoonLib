@@ -67,7 +67,7 @@ the player cache saves every player through the database, and only then is the d
 | Situation | What happens |
 |---|---|
 | Relocated (each plugin has its own copy) | Each copy is completely independent; contexts never meet |
-| Shared (unrelocated or standalone) | One copy, many contexts; ownership resolution decides who is who |
+| Shared (unrelocated) | One copy, many contexts; ownership resolution decides who is who |
 | Cross-copy communication | `MoonLink` uses only JDK types (`BiFunction`, `Map`) through Bukkit's `ServicesManager`, so relocated copies understand each other |
 
 Shared listeners (menus, chat input) are registered once under a *host* plugin and move to another

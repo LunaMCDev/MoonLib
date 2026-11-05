@@ -1,6 +1,6 @@
 # Scoreboards
 
-Package: `dev.lunamc.moonlib.scoreboard`
+Package: `com.lunamcdev.moonlib.scoreboard`
 
 ## One board
 

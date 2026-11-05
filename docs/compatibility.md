@@ -39,8 +39,8 @@ MoonLib follows [Semantic Versioning](https://semver.org/):
 
 ### What counts as public API
 
-- Every `public` or `protected` class, method, field and constructor in `dev.lunamc.moonlib` and its
-  subpackages, **except** `dev.lunamc.moonlib.version.adapter` (internal by contract) and anything
+- Every `public` or `protected` class, method, field and constructor in `com.lunamcdev.moonlib` and its
+  subpackages, **except** `com.lunamcdev.moonlib.version.adapter` (internal by contract) and anything
   annotated or documented as internal.
 - The format of files MoonLib writes (YAML/JSON layout from `DataMapper`, the
   `moonlib_migrations` table).

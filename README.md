@@ -6,7 +6,7 @@ migrations, safe per-player data, modules, multi-version support, a Folia-aware 
 that reload themselves, and the dozens of small helpers every plugin ends up rewriting. You shade
 it into each plugin and get straight to the parts that are actually yours.
 
-Starting a new plugin? Copy the [**template plugin**](template-plugin): a one-click IntelliJ test
+Starting a new plugin? Use the [**template plugin**](https://github.com/LunaMCDev/MoonLib-Template): a one-click IntelliJ test
 server where code changes apply **without restarting**.
 
 | | |
@@ -15,8 +15,8 @@ server where code changes apply **without restarting**.
 | **Servers** | CraftBukkit, Spigot, Paper, Purpur, Pufferfish, Folia |
 | **Java** | Builds with JDK 25+ against the Minecraft 26.3 API, ships Java 8 bytecode (so it also loads on 1.8 servers) |
 | **Runtime dependencies** | None. PlaceholderAPI and Vault are optional soft hooks |
-| **Multiple plugins** | Any number per server: relocated, shared, or via the standalone plugin |
-| **Tests** | 113 unit tests plus multi-copy, cross-plugin and lifecycle harnesses |
+| **Multiple plugins** | Any number per server, relocated or shared, without interfering with each other |
+| **Tests** | 118 unit tests plus multi-copy, cross-plugin and lifecycle harnesses |
 | **Licence** | MIT |
 
 ---
@@ -28,7 +28,8 @@ server where code changes apply **without restarting**.
 - [Quick start](#quick-start)
 - [A taste of every module](#a-taste-of-every-module)
 - [Documentation](#documentation)
-- [Template plugin & hot reload](#template-plugin--hot-reload)
+- [Example & template plugins, hot reload](#example--template-plugins-hot-reload)
+- [Versioning](#versioning)
 - [Project layout](#project-layout)
 - [Building](#building)
 
@@ -38,7 +39,7 @@ server where code changes apply **without restarting**.
 
 | Module | Package | What you get |
 |---|---|---|
-| **Core** | `dev.lunamc.moonlib` | `MoonPlugin` base class, multi-plugin support with per-plugin ownership, ordered shutdown of everything a plugin created |
+| **Core** | `com.lunamcdev.moonlib` | `MoonPlugin` base class, multi-plugin support with per-plugin ownership, ordered shutdown of everything a plugin created |
 | **Commands** | `.command` | Subcommands, typed arguments, tab completion, permissions, cooldowns, auto help/usage. No `plugin.yml` entries |
 | **Annotated commands** | `.command.annotation` | A whole command tree as plain methods: `@Command`, `@Subcommand`, `@Arg`, `@Greedy`, `@Range`, `@Suggest`, `@Cooldown` |
 | **Menus** | `.menu` | Chest GUIs, visual layouts, pagination, confirm dialogs, auto-refresh, dupe-proof click handling |
@@ -46,7 +47,7 @@ server where code changes apply **without restarting**.
 | **Displays** | `.display` | Boss bars with countdowns, tab header/footer and names, holograms (text displays on 1.19.4+, armor stands before) |
 | **Rich text** | `.util.RichText` | MiniMessage-style `<gradient>`, `<rainbow>`, `<#hex>`, `<bold>`, safe placeholders, on every version without Adventure |
 | **Database** | `.database` | SQLite / MySQL / MariaDB with a built-in pool, async queries, transactions, versioned migrations, dialect-aware upserts. No dependency |
-| **Player data** | `.player` | `PlayerCache`: load before join, save on quit/autosave/shutdown, safe against failed loads and quick rejoins |
+| **Player data** | `.player` | `PlayerCache`: load before join, save on quit/autosave/shutdown, safe against failed loads and quick rejoins. Stored as **JSON or YAML files, or SQL**, chosen in code or in config; unchanged players are never rewritten; isolated per plugin |
 | **Modules** | `.module` | Split a plugin into toggleable features with dependency order, isolated failures, automatic cleanup and a service registry |
 | **Multi-version** | `.version` | Version/software detection, modern material, sound and enchantment names on every version, reflection helpers |
 | **Scheduler** | `.scheduler` | One API for Bukkit and **Folia** (global, async, entity and region tasks), `CompletableFuture` helpers |
@@ -82,24 +83,23 @@ installs JDK 25 for the build):
 <dependency>
     <groupId>com.github.LunaMCDev</groupId>
     <artifactId>MoonLib</artifactId>
-    <version>1.1.1-alpha</version>   <!-- a release tag, a commit hash, or main-SNAPSHOT -->
+    <version>1.2.0-beta</version>   <!-- a release tag, a commit hash, or main-SNAPSHOT -->
 </dependency>
 ```
 
 The JitPack artifact uses the `com.github.LunaMCDev` group, but the Java package is still
-`dev.lunamc.moonlib`, so relocation configs stay the same.
+`com.lunamcdev.moonlib`, so relocation configs stay the same.
 
 ### 2. Add it to your plugin
 
-MoonLib can be relocated into your jar (recommended), shaded without relocating, or installed once as a
-standalone plugin that your plugins `depend` on. Any number of plugins can use it at the same time in any
-of these modes; see [docs/shading.md](docs/shading.md). The relocated setup:
+MoonLib can be relocated into your jar (recommended) or shaded without relocating. Any number of plugins
+can use it at the same time in either mode; see [docs/shading.md](docs/shading.md). The relocated setup:
 
 ```xml
 <dependency>
-    <groupId>dev.lunamc</groupId>
+    <groupId>com.lunamcdev</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.1.1-alpha</version>
+    <version>1.2.0-beta</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -119,7 +119,7 @@ of these modes; see [docs/shading.md](docs/shading.md). The relocated setup:
                 <createDependencyReducedPom>false</createDependencyReducedPom>
                 <relocations>
                     <relocation>
-                        <pattern>dev.lunamc.moonlib</pattern>
+                        <pattern>com.lunamcdev.moonlib</pattern>
                         <!-- change this to a package inside YOUR plugin -->
                         <shadedPattern>me.you.yourplugin.libs.moonlib</shadedPattern>
                     </relocation>
@@ -130,11 +130,10 @@ of these modes; see [docs/shading.md](docs/shading.md). The relocated setup:
 </plugin>
 ```
 
-> **Not relocating is fine too.** Plugins that shade MoonLib unrelocated, or that use the standalone
-> MoonLib plugin, share one copy. MoonLib keeps each plugin's tasks, menus, commands, scoreboards
+> **Not relocating is fine too.** Plugins that shade MoonLib unrelocated share one copy. MoonLib keeps each plugin's tasks, menus, commands, scoreboards
 > and settings separate, works out which plugin is calling, and cleans up only the plugin that
 > disables. Relocation is still the safest choice for plugins you publish, because each one gets a
-> private copy and versions can never clash. Details, Gradle config and the standalone setup are in
+> private copy and versions can never clash. Details and Gradle config are in
 > [docs/shading.md](docs/shading.md).
 
 ### 4. Set `api-version` in `plugin.yml`
@@ -175,7 +174,7 @@ public final class MoonPrison extends MoonPlugin {
 ```
 
 That is the whole setup. Read [docs/getting-started.md](docs/getting-started.md) for a guided tour,
-or browse the complete, buildable [example plugin](example-plugin).
+or browse the complete, buildable [example plugin](https://github.com/LunaMCDev/MoonLib-Example).
 
 ---
 
@@ -369,7 +368,7 @@ new Cuboid(pos1, pos2).fill(composition);
 |---|---|
 | [Getting started](docs/getting-started.md) | Setup, project structure, your first command and menu |
 | [Development workflow](docs/dev-workflow.md) | Local test server, hot reload in IntelliJ, how it works |
-| [Deployment & multiple plugins](docs/shading.md) | Relocated, shared and standalone modes, how sharing works, Maven/Gradle configs, troubleshooting |
+| [Deployment & multiple plugins](docs/shading.md) | Relocated and shared modes, how sharing works, Maven/Gradle configs, troubleshooting |
 | [Commands](docs/commands.md) | `MoonCommand`, annotated commands, `CommandBuilder`, arguments, custom types, messages |
 | [Menus](docs/menus.md) | `Menu`, layouts, `PaginatedMenu`, `ConfirmMenu`, safety guarantees |
 | [Scoreboards](docs/scoreboards.md) | `Board`, `BoardManager`, limits per version |
@@ -398,22 +397,48 @@ IDE. The guides also build into a searchable site with `mkdocs serve` (see `mkdo
 
 ---
 
-## Template plugin & hot reload
+## Example & template plugins, hot reload
 
-[`template-plugin/`](template-plugin) is a complete plugin to copy for new projects. It comes with:
+Two plugins live in their own repositories, both with the same test-server and hot-swap setup.
+They are kept separate from the library on purpose: they use MoonLib exactly as your plugins do,
+from JitPack, so they always build against a published version.
 
-- **Setup Dev Server**: downloads Paper 26.3, the latest release (PaperMC Fill API,
+- [**MoonLib-Example**](https://github.com/LunaMCDev/MoonLib-Example): a tour of MoonLib's features (commands, menus,
+  sidebar, messages, player data in JSON files). Read and poke at it.
+- [**MoonLib-Template**](https://github.com/LunaMCDev/MoonLib-Template): a clean starting point for new plugins
+  (*Use this template* on GitHub, or download it).
+
+Both build with **Ant** (`build.xml`, driven by `pom.xml`) or Maven:
+
+- **setup-server** (Ant target, or the *Setup Dev Server* run configuration): downloads Paper 26.3, the latest release (PaperMC Fill API,
   checksum-verified), into `run/`;
-- **Dev Server**: builds the plugin into the server and starts it under the debugger;
+- **Dev Server**: builds the plugin into the server with Ant and starts it under the debugger
+  (or `ant run` plus *Attach Debugger*, or *Dev Server (Maven)*);
 - **edit → Build → done**: IntelliJ hot-swaps your classes (JetBrains Runtime allows adding
   methods and fields too) and the template re-enables its modules with the new code, so you
   never restart for most changes;
 - config and messages that reload when you save them;
-- example modules (stats, welcome titles and boss bar, sidebar), an annotated command, a menu,
-  SQLite storage with migrations and a player cache.
+- the template adds example modules (stats, welcome titles and boss bar, sidebar), an annotated
+  command, a modules menu and automatic module reload after each build.
 
-Step-by-step setup: [template-plugin/README.md](template-plugin/README.md). How it works:
+Step-by-step setup: the [template's README](https://github.com/LunaMCDev/MoonLib-Template#readme). How it works:
 [docs/dev-workflow.md](docs/dev-workflow.md).
+
+---
+
+## Versioning
+
+The version is set **once**, in `pom.xml`, and you don't even edit that by hand:
+
+```bash
+java tools/SetVersion.java 1.3.0-beta    # or: ant set-version (asks), or: mvn validate -Pset-version -Dto=1.3.0-beta
+```
+
+That updates `pom.xml` and every other place in this repository that shows the version: the install
+snippets in this README and the docs, `SECURITY.md` and the bug-report template. `MoonLib.VERSION` (and the shared-mode version check) is written into the
+jar from `pom.xml` at build time. CI runs `java tools/SetVersion.java --check` and fails if anything
+drifts. Then tag the commit with the same version for JitPack, and once JitPack has built it, bump
+`<moonlib.version>` in your plugins (and in MoonLib-Example and MoonLib-Template).
 
 ---
 
@@ -422,7 +447,7 @@ Step-by-step setup: [template-plugin/README.md](template-plugin/README.md). How 
 ```
 MoonLib/
 ├── pom.xml                       Maven build (library)
-├── src/main/java/dev/lunamc/moonlib/
+├── src/main/java/com/lunamcdev/moonlib/
 │   ├── MoonLib.java              lifecycle (init / shutdown)
 │   ├── MoonPlugin.java           JavaPlugin base class
 │   ├── command/                  command framework
@@ -445,9 +470,8 @@ MoonLib/
 │   └── util/                     everything else
 ├── src/test/java/                unit tests (JUnit 5)
 ├── docs/                         guides
-├── example-plugin/               a complete plugin that shades MoonLib
-├── template-plugin/              starter project with dev server and hot reload
-├── standalone-plugin/            MoonLib as an installable plugin (shared by dependants)
+├── tools/SetVersion.java         changes the version everywhere
+├── build.xml                     Ant: set-version, check-version
 ├── .github/                      CI, docs publishing, issue/PR templates
 └── mkdocs.yml                    documentation site
 ```

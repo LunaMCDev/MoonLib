@@ -1,20 +1,81 @@
 # Player data
 
-*Since 1.1.1-alpha.* Almost every plugin keeps data per player: balances, stats, settings. Getting it right
+*Since 1.2.0.* Almost every plugin keeps data per player: balances, stats, settings. Getting it right
 is harder than it looks. Loading on the main thread causes lag spikes, saving on quit can race a
 quick rejoin, and a failed load followed by a save can wipe someone's progress. `PlayerCache`
 handles all of that.
 
 ```java
-PlayerCache<PlayerData> players = PlayerCache.of(this,
-        DataStore.json(this, "players", PlayerData.class), PlayerData::new);
+public final class PlayerData {          // plain fields and a no-argument constructor
+    public volatile long tokens;
+    public volatile String rank = "A";
+}
+
+PlayerCache<PlayerData> players = PlayerCache.json(this, PlayerData.class, PlayerData::new);
 
 // anywhere on the server thread, for an online player:
 PlayerData data = players.get(player);
 data.tokens += 10;        // just change it; saving is automatic
 ```
 
-## Any storage
+## Files or a database: choose the storage
+
+No database is needed. Pick where data lives in one line, or let server owners pick in config:
+
+| Storage | Code | Where the data goes |
+|---|---|---|
+| JSON files | `PlayerCache.json(this, PlayerData.class, PlayerData::new)` | `plugins/<Plugin>/players/<uuid>.json` |
+| YAML files | `PlayerCache.yaml(this, PlayerData.class, PlayerData::new)` | `plugins/<Plugin>/players/<uuid>.yml` |
+| A database | `PlayerCache.sql(this, database, PlayerData.class, PlayerData::new)` | a row in `moonlib_player_data` |
+| Owner's choice | `PlayerCache.fromConfig(this, config, "storage", PlayerData.class, PlayerData::new)` | see below |
+
+```yaml
+storage:
+  type: json            # json, yaml, sqlite, mysql or mariadb
+  folder: players       # json / yaml
+  file: data.db         # sqlite
+  host: localhost       # mysql / mariadb (same keys as Database.fromConfig)
+  port: 3306
+  name: prison
+  username: root
+  password: ''
+```
+
+Your class is saved with `DataMapper`, so it can hold anything `DataMapper` supports: numbers,
+strings, enums, UUIDs, lists, sets, maps and nested objects. Adding a field needs no migration: old
+files and rows simply get the field's default.
+
+For more control, build the cache yourself:
+
+```java
+PlayerCache<PlayerData> players = PlayerCache.<PlayerData>builder(this)
+        .storage(PlayerStorage.fromConfig(this, config, "storage", PlayerData.class), PlayerData::new)
+        .autosave(2, TimeUnit.MINUTES)
+        .failedLoadMessage("&cYour data could not be loaded. Please rejoin.")
+        .build();
+```
+
+### Efficient saving
+
+The built-in storages remember what they last wrote for each player and **skip saves when nothing
+changed**, so an autosave with 200 idle players writes nothing. With a database, all changed players
+of an autosave are written in **one batched transaction**.
+
+### Several plugins, one server
+
+- File storage lives in each plugin's own data folder.
+- The SQL storage keys every row by **plugin name and UUID**, so any number of plugins can share one
+  database without seeing or overwriting each other's data.
+- Each cache has its own background thread, listeners and autosave, owned by its plugin. Shutting
+  one plugin down saves and closes only its caches, even when several plugins share one copy of
+  MoonLib.
+
+### Your own storage
+
+Implement `PlayerStorage<T>` (`load`, `save`, `delete`, `describe`; optionally `saveAll` and `close`)
+to store data anywhere, for example in your own SQL table with real columns you can query.
+
+## Custom loader and saver
 
 ```java
 PlayerCache<Stats> stats = PlayerCache.<Stats>builder(this)
@@ -52,7 +113,9 @@ correct there.
 | `load(uuid, name)`, `unload(uuid)` | Offline players, or caches built with `manual()` |
 | `save(uuid)`, `saveAll()` | Save now (futures) |
 | `loaded()` | Snapshot of everything in memory |
-| `evict(uuid)` | Drop without saving (after deleting their data) |
+| `evict(uuid)` | Drop without saving |
+| `delete(uuid)` | Delete stored data and drop from memory (storage-backed caches) |
+| `storage()` | The `PlayerStorage` in use |
 
 ## Thread safety
 

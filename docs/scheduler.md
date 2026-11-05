@@ -1,6 +1,6 @@
 # Scheduler
 
-Package: `dev.lunamc.moonlib.scheduler`
+Package: `com.lunamcdev.moonlib.scheduler`
 
 `Tasks` is a single scheduling API that works on Bukkit, Spigot, Paper **and Folia**. All delays
 and periods are in ticks (20 ticks = 1 second). Every method returns a `TaskHandle` with `cancel()`

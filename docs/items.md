@@ -1,6 +1,6 @@
 # Items
 
-Package: `dev.lunamc.moonlib.item`
+Package: `com.lunamcdev.moonlib.item`
 
 ## `ItemBuilder`
 

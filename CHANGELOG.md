@@ -6,13 +6,35 @@ All notable changes to MoonLib are documented here. The format follows
 
 ## [Unreleased]
 
-## [1.1.1-alpha] - 2026-11-05
+## [1.2.0-beta] - 2026-11-05
 
 ### Changed
-- Building MoonLib now needs **JDK 25** (the 26.x API is Java 25 bytecode). The jar is still Java 8
-  bytecode and runs on every supported server. `jitpack.yml` installs JDK 25 automatically.
+- **Package and Maven group renamed** from `dev.lunamc` to `com.lunamcdev`
+  (`com.lunamcdev.moonlib.*`). Update imports and relocation patterns (`<pattern>com.lunamcdev.moonlib</pattern>`).
+  The JitPack coordinates are unchanged: `com.github.LunaMCDev:MoonLib`.
+- **One version, set in one place.** `pom.xml` holds the version; `MoonLib.VERSION` is written into the jar at
+  build time, and `java tools/SetVersion.java <version>` (or `ant set-version`) updates every other place
+  that shows it. CI checks they agree.
+- Building needs **JDK 25** (the Minecraft 26.x API is Java 25 bytecode); the jar is still Java 8 bytecode.
+  `jitpack.yml` installs JDK 25 automatically.
+- The standalone MoonLib plugin was removed. Shade MoonLib into each plugin (relocated or shared).
+- The example and template plugins moved to their own repositories, **MoonLib-Example** and
+  **MoonLib-Template**, and get MoonLib from JitPack like any plugin would. This repository is the library only.
+- `ConfigFile` is now a `YamlFile`. Its API is unchanged except that `set`, `setLocation` and `reload` return the
+  file for chaining and `save()` returns whether it succeeded.
 
 ### Added
+- **Player data in files or a database.** `PlayerStorage` with `json`, `yaml` and `sql` storages, chosen in code
+  or by server owners in config (`PlayerStorage.fromConfig`, `storage.type: json|yaml|sqlite|mysql|mariadb`);
+  `PlayerCache.json/yaml/sql/fromConfig` shortcuts, `Builder.storage(...)`, `PlayerCache.delete`. Storages
+  skip unchanged players on save, SQL writes changed players in one batch, and rows are keyed by plugin so
+  several plugins can share a database and a copy of MoonLib without touching each other's data.
+- `RichText` caches parsed templates and fills placeholders at render time; placeholder values can no longer
+  carry `§` colour codes.
+- **Ant builds** for the example and template plugins (`build.xml`: `setup-server`, `dev`, `run`, `clean`)
+  driven by each plugin's `pom.xml`, IntelliJ run configurations that build with Ant and hot-swap, and an
+  *Attach Debugger* configuration for servers started with `ant run`. The example plugin now has the same
+  test-server and hot-swap setup as the template, and shows file-based player data with `/stats`.
 - **Annotated commands** (`command.annotation`): `@Command`, `@Subcommand` (nested paths such as
   `"admin reset"`), `@Execute`, `@Arg` (name, optional, default, named type), `@Greedy`, `@Range`,
   `@Suggest`, `@Cooldown`. Builds ordinary `MoonCommand`s; mistakes are reported at build time with the
@@ -52,10 +74,6 @@ All notable changes to MoonLib are documented here. The format follows
 - Documentation: database, modules, player data, displays, rich text, development workflow, architecture,
   compatibility and API stability policy, cookbook and FAQ guides; MkDocs site configuration;
   CONTRIBUTING, SECURITY and code of conduct; CI and docs-publishing workflows; issue and PR templates.
-
-## [1.3.0] - 2026-11-02
-
-### Added
 - **Plugins that work together.** `Integrations` / `Integration`: detect another plugin and switch a link on when it
   enables (whatever the load order), off when it disables, and on again after a reload; minimum versions; failures
   are logged and never crash the plugin.
@@ -63,10 +81,6 @@ All notable changes to MoonLib are documented here. The format follows
   `providers`) and send events (`publish`, `subscribe`) with no API jar or compile-time dependency. It works between
   relocated copies, shared copies and the standalone plugin, through Bukkit's `ServicesManager`.
 - The standalone plugin's `/moonlib` lists every plugin's MoonLink capabilities.
-
-## [1.2.0] - 2026-11-01
-
-### Added
 - **YAML and JSON files with one API.** `DataFile` (with `YamlFile` and `JsonFile`): create, read, edit and save
   by dot path, defaults from the jar merged on load, broken files backed up with line/column errors,
   atomic saves, `saveAsync`, `edit(...)`, `setIfAbsent`, `remove`, `keys`, `toMap`, `as(Class)` / `setRoot`.
@@ -79,13 +93,14 @@ All notable changes to MoonLib are documented here. The format follows
 - `MalformedDataException` with line and column.
 - `MoonPlugin#loadYaml`, `#loadJson`, `#dataStore`.
 
-### Changed
-- `ConfigFile` is now a `YamlFile`. Its API is unchanged except that `set`, `setLocation` and `reload` return the
-  file for chaining and `save()` returns whether it succeeded.
+## [1.1.1-beta] and earlier
 
-## [1.1.0] - 2026-11-01
+_The entries below were developed before the version numbers were aligned with the published
+`1.1.1-beta`._
 
-### Added
+### 1.1.0
+
+#### Added
 - **Multi-plugin support.** Any number of plugins can use one copy of MoonLib (unrelocated shading or the
   new standalone plugin) without errors. Previously a second plugin on a shared copy threw an
   `IllegalStateException`.
@@ -100,7 +115,7 @@ All notable changes to MoonLib are documented here. The format follows
 - `CommandMessages.set(key, value)`, `CommandMessages.get(key)`, `CommandMessages.keys()`.
 - `CommandRegistry.registered(Plugin)`, `Menu#owner()`, `BoardManager#owner()`, `EventSubscription#owner()`.
 
-### Changed
+#### Changed
 - `MoonLib.shutdown(Plugin)`, `Tasks.shutdown(Plugin)`, `MenuManager.shutdown(Plugin)`,
   `ChatInput.shutdown(Plugin)`, `BoardManager.stopAll(Plugin)` and `CommandRegistry.unregisterAll(Plugin)`
   clean up a single plugin. `MoonLib.shutdown()` without arguments shuts down the calling plugin.
@@ -110,9 +125,9 @@ All notable changes to MoonLib are documented here. The format follows
 - `CommandMessages.load(...)` now applies to the calling plugin only. Assigning the public fields still
   changes the global defaults.
 
-## [1.0.0] - 2026-11-01
+### 1.0.0
 
-### Added
+#### Added
 - `MoonPlugin` base class and `MoonLib` lifecycle with relocation safety check.
 - Command framework: `MoonCommand`, `CommandBuilder`, `CommandContext`, `CommandError`,
   `ArgumentTypes` (string, greedy, numbers with k/m/b suffixes, boolean, player, offline player,

@@ -8,7 +8,7 @@ plugin and skip straight to the parts that are actually yours.
 | Minecraft | 1.8.8 → newest, including 26.x |
 | Servers | CraftBukkit, Spigot, Paper, Purpur, Pufferfish, Folia |
 | Dependencies | none |
-| Plugins per server | any number, relocated, shared or standalone |
+| Plugins per server | any number, relocated or shared |
 
 ## Start here
 

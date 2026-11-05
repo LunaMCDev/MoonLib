@@ -1,6 +1,6 @@
 # Integrations: plugins that work together
 
-Package: `dev.lunamc.moonlib.integration`
+Package: `com.lunamcdev.moonlib.integration`
 
 MoonLib gives your plugins two tools for working with other plugins:
 
@@ -52,7 +52,7 @@ in your main class. Then the classes are only loaded when that plugin is actuall
 Every plugin usually has its **own relocated copy** of MoonLib, so plugins can't share MoonLib's Java classes
 with each other. MoonLink works around this: each copy registers an endpoint with Bukkit's `ServicesManager`
 using only standard Java types, and the copies find and call each other through it. This works between
-relocated copies, shared copies and the standalone plugin, in any combination.
+relocated and shared copies, in any combination.
 
 ### Offering a feature
 
@@ -116,7 +116,7 @@ MoonLink.capabilities();           // plugin -> what it offers
 MoonLink.providers("crates:give-key");
 ```
 
-The standalone MoonLib plugin's `/moonlib` command lists every plugin's capabilities in game.
+`MoonLink.capabilities()` returns every plugin's capabilities, for a diagnostics command of your own.
 
 ## Putting it together
 

@@ -1,6 +1,6 @@
 # YAML & JSON files
 
-Package: `dev.lunamc.moonlib.config`
+Package: `com.lunamcdev.moonlib.config`
 
 MoonLib gives YAML and JSON files the same API: create a file, read and edit values by dot path, store
 your own classes, and save. It also includes a `DataStore` for "one file per player" data.

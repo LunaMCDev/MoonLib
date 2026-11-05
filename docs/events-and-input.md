@@ -2,7 +2,7 @@
 
 ## Functional events
 
-Package: `dev.lunamc.moonlib.event`
+Package: `com.lunamcdev.moonlib.event`
 
 ```java
 // simplest form
@@ -50,7 +50,7 @@ Classic `Listener` classes still work as normal; register them with
 
 ## Chat input
 
-Package: `dev.lunamc.moonlib.input`
+Package: `com.lunamcdev.moonlib.input`
 
 ```java
 ChatInput.ask(player)

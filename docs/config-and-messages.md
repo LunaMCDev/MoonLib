@@ -1,6 +1,6 @@
 # Config & messages
 
-Package: `dev.lunamc.moonlib.config`
+Package: `com.lunamcdev.moonlib.config`
 
 > For general YAML **and JSON** files, storing your own classes, and per-player data, see
 > [data-files.md](data-files.md). `ConfigFile` is a `YamlFile`, so everything there works on it too.
@@ -85,7 +85,7 @@ messages.reload();
 
 ## Reloading automatically
 
-*Since 1.1.1-alpha.* Any MoonLib file can reload itself when it changes on disk, so server owners (and you,
+*Since 1.2.0.* Any MoonLib file can reload itself when it changes on disk, so server owners (and you,
 while developing) see edits the moment they save:
 
 ```java

@@ -1,6 +1,6 @@
 # Boss bars, tab list & holograms
 
-*Since 1.1.1-alpha.* All three are removed automatically when the owning plugin shuts down MoonLib. Text
+*Since 1.2.0.* All three are removed automatically when the owning plugin shuts down MoonLib. Text
 accepts `&` codes and hex colours; pass it through [`RichText.parse`](rich-text.md) for gradients.
 
 ## Boss bars (`Bar`)

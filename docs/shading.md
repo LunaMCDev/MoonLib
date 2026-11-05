@@ -1,17 +1,16 @@
-# Deploying MoonLib: relocated, shared or standalone
+# Deploying MoonLib: relocated or shared
 
-Any number of plugins can use MoonLib on the same server. There are three ways to ship it, and
-all three work without errors. Pick per plugin; you can even mix them on one server.
+Any number of plugins can use MoonLib on the same server. There are two ways to ship it, and
+both work without errors. Pick per plugin; you can even mix them on one server.
 
 | Mode | How | Each plugin gets | Best for |
 |---|---|---|---|
 | **Relocated** (recommended) | Shade + relocate into your own package | Its own private copy | Public plugins, anything you hand to other servers |
 | **Shared shaded** | Shade without relocating | One copy shared with other unrelocated plugins | Quick setups, your own plugin suites |
-| **Standalone** | Install `MoonLib.jar` in `plugins/`, `depend: [MoonLib]`, `provided` scope | The installed copy | Networks running many of your own plugins, small jars |
 
 ## How sharing works
 
-When more than one plugin uses the same copy of MoonLib (shared shaded or standalone mode), MoonLib
+When more than one plugin uses the same copy of MoonLib (shared mode), MoonLib
 keeps **separate state for every plugin**:
 
 - **Ownership.** Every task, menu, command, scoreboard manager, chat prompt, event subscription,
@@ -58,7 +57,6 @@ MoonLib.version();         // the copy actually running
 MoonLib.isVersionAtLeast("1.1.0");
 ```
 
-The standalone plugin adds `/moonlib` (permission `moonlib.admin`), which lists all of this in game.
 
 ---
 
@@ -72,9 +70,9 @@ because each copy has exactly one plugin.
 
 ```xml
 <dependency>
-    <groupId>dev.lunamc</groupId>
+    <groupId>com.lunamcdev</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.1.1-alpha</version>
+    <version>1.2.0-beta</version>
 </dependency>
 ```
 
@@ -91,7 +89,7 @@ because each copy has exactly one plugin.
                 <createDependencyReducedPom>false</createDependencyReducedPom>
                 <relocations>
                     <relocation>
-                        <pattern>dev.lunamc.moonlib</pattern>
+                        <pattern>com.lunamcdev.moonlib</pattern>
                         <shadedPattern>me.you.myplugin.libs.moonlib</shadedPattern>
                     </relocation>
                 </relocations>
@@ -116,11 +114,11 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:26.3-R0.1-SNAPSHOT")
-    implementation("dev.lunamc:moonlib:1.1.1-alpha")
+    implementation("com.lunamcdev:moonlib:1.2.0-beta")
 }
 
 tasks.shadowJar {
-    relocate("dev.lunamc.moonlib", "me.you.myplugin.libs.moonlib")
+    relocate("com.lunamcdev.moonlib", "me.you.myplugin.libs.moonlib")
     archiveClassifier.set("")
 }
 
@@ -146,51 +144,13 @@ Things to know:
   actually used and you get a warning. Keep your plugins on the same MoonLib version, or relocate.
 - **Plugin managers.** If you hot-unload (e.g. with PlugMan) the plugin whose jar MoonLib's classes
   happened to be loaded from, the others can lose access to MoonLib classes they haven't used yet.
-  A normal restart or `/reload` is fine. If you hot-swap plugins often, relocate or use standalone mode.
-
----
-
-## Mode 3: standalone plugin
-
-Build the standalone plugin and install it once:
-
-```bash
-cd MoonLib && mvn clean install
-cd standalone-plugin && mvn clean package
-# copy standalone-plugin/target/MoonLib-1.1.1-alpha.jar into plugins/
-```
-
-In each plugin that uses it:
-
-```xml
-<dependency>
-    <groupId>dev.lunamc</groupId>
-    <artifactId>moonlib</artifactId>
-    <version>1.1.1-alpha</version>
-    <scope>provided</scope>   <!-- not shaded -->
-</dependency>
-```
-
-```yaml
-# plugin.yml
-depend: [MoonLib]
-```
-
-Your plugin still calls `MoonLib.init(this)` / extends `MoonPlugin` as normal. The jar stays tiny,
-and updating MoonLib means replacing one file. If you need a feature from a newer MoonLib,
-check for it:
-
-```java
-if (!MoonLib.isVersionAtLeast("1.1.0")) {
-    getLogger().warning("Please update MoonLib to 1.1.0 or newer");
-}
-```
+  A normal restart or `/reload` is fine. If you hot-swap plugins often, relocate.
 
 ---
 
 ## `minimizeJar`
 
-`<minimizeJar>true</minimizeJar>` is safe in modes 1 and 2: MoonLib's version-specific classes are
+`<minimizeJar>true</minimizeJar>` is safe in both modes: MoonLib's version-specific classes are
 all referenced directly. If you ever see a `NoClassDefFoundError` for a MoonLib class, turn it off
 first.
 
@@ -198,8 +158,8 @@ first.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Warning: "X was built with MoonLib 1.2.0, but MoonLib 1.1.0 (from Y) is the copy in use" | Shared copy older than what X needs | Update Y (or the standalone plugin), or relocate MoonLib in X |
-| `NoClassDefFoundError: dev/lunamc/moonlib/...` | Not shaded (`provided` scope without the standalone plugin installed), or the shade plugin is missing | Shade it, or install the standalone plugin and add `depend: [MoonLib]` |
+| Warning: "X was built with MoonLib 1.2.0, but MoonLib 1.1.0 (from Y) is the copy in use" | Shared copy older than what X needs | Update Y, or relocate MoonLib in X |
+| `NoClassDefFoundError: com/lunamcdev/moonlib/...` | Not shaded (`provided` scope), or the shade plugin is missing | Use `compile` scope and the shade plugin |
 | `IllegalStateException: MoonLib has not been initialised` | Using MoonLib before `MoonLib.init` | Extend `MoonPlugin`, or call `MoonLib.init(this)` first in `onEnable` |
 | A task or menu disappears when a *different* plugin disables | It was created from unattributed code and owned by the host | Wrap that code in `MoonLib.runAs(yourPlugin, ...)` |
 | `UnsupportedClassVersionError` on an old server | Your plugin targets a newer Java than the server runs | Compile with `<maven.compiler.release>8</maven.compiler.release>` for 1.8 to 1.16 servers |
