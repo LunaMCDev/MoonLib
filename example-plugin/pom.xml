@@ -20,7 +20,7 @@
     <properties>
         <maven.compiler.release>8</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <moonlib.version>1.4.0</moonlib.version>
+        <moonlib.version>1.1.0-alpha</moonlib.version>
     </properties>
 
     <repositories>
