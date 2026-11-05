@@ -1,6 +1,6 @@
 name: Release
 
-# Push a tag such as 1.4.0 to build the jars and create a GitHub release with them.
+# Push a tag such as 1.1.1-alpha to build the jars and create a GitHub release with them.
 # JitPack builds the same tag on demand for com.github.LunaMCDev:MoonLib:<tag>.
 
 on:

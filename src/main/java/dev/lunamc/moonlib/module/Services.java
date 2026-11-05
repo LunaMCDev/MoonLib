@@ -18,7 +18,7 @@ import java.util.Optional;
  * <p>This is deliberately simple: a type maps to one instance. Services are private to the plugin;
  * use {@link dev.lunamc.moonlib.integration.MoonLink} to offer features to other plugins.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class Services {
 

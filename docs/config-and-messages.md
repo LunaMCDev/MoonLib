@@ -85,7 +85,7 @@ messages.reload();
 
 ## Reloading automatically
 
-*Since 1.4.0.* Any MoonLib file can reload itself when it changes on disk, so server owners (and you,
+*Since 1.1.1-alpha.* Any MoonLib file can reload itself when it changes on disk, so server owners (and you,
 while developing) see edits the moment they save:
 
 ```java

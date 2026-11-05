@@ -75,7 +75,7 @@ import java.util.logging.Level;
  * them thread-safe.</p>
  *
  * @param <T> the data type
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class PlayerCache<T> implements AutoCloseable {
 

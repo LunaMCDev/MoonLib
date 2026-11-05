@@ -45,7 +45,7 @@ import java.util.logging.Level;
  * on Folia). Watching uses the operating system's file notifications, so it costs nothing while
  * files are unchanged. All watches end when the plugin shuts down MoonLib.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class FileWatcher implements AutoCloseable {
 

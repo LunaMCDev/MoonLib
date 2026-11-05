@@ -148,7 +148,7 @@ protected List<String> suggest(CommandContext ctx) {
 
 ## Annotated commands
 
-*Since 1.4.0.* Write a whole command tree as plain methods. MoonLib builds the same `MoonCommand`
+*Since 1.1.1-alpha.* Write a whole command tree as plain methods. MoonLib builds the same `MoonCommand`
 objects you would write by hand, so help pages, usage lines, messages and tab completion are
 identical, and annotated and hand-written commands can be mixed freely.
 

@@ -16,7 +16,7 @@ import java.util.Optional;
  * <p>These methods block. Call them from an async task, or use the {@code ...Async} methods on
  * {@link Database}.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public interface SqlOperations {
 

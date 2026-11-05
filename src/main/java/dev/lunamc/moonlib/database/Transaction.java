@@ -26,7 +26,7 @@ import java.util.Optional;
  * <p>Note that MySQL commits immediately on DDL ({@code CREATE}, {@code ALTER}, {@code DROP}), so
  * those cannot be rolled back there.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class Transaction implements SqlOperations {
 

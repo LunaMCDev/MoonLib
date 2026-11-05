@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * subcommands: {@code @Subcommand("mine reset")} creates {@code /cmd mine reset}, adding the
  * {@code mine} level automatically if no method declares it.
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

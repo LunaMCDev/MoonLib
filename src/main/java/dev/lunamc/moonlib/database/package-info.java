@@ -7,6 +7,6 @@
  * <p>No dependency is needed: Spigot, Paper and their forks ship the SQLite and MySQL drivers.
  * See {@code docs/database.md}.</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 package dev.lunamc.moonlib.database;

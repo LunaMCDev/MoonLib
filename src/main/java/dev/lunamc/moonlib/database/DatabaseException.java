@@ -5,7 +5,7 @@ package dev.lunamc.moonlib.database;
  * parameters, which may hold player data), and the cause is the original
  * {@link java.sql.SQLException}.
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public class DatabaseException extends RuntimeException {
 

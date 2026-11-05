@@ -163,7 +163,7 @@ public abstract class MoonPlugin extends JavaPlugin {
      *
      * @param commands the commands and handlers to register
      * @see dev.lunamc.moonlib.command.annotation.AnnotatedCommands
-     * @since 1.4.0
+     * @since 1.1.1-alpha
      */
     protected final void registerCommands(Object... commands) {
         for (Object command : commands) {

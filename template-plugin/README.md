@@ -118,7 +118,7 @@ automatically.
 | IntelliJ: *Hot Swap failed … add method not implemented* | The Dev Server is not running on the JetBrains Runtime (step 4), or you started it with Run instead of Debug |
 | Changes do nothing after Build | Started with Run instead of Debug, or HotSwap is set to *Never* (step 5) |
 | `[Dev] New class … needs a restart` | Expected: restart the Dev Server once |
-| `Could not find artifact com.github.LunaMCDev:MoonLib` | Push a `1.4.0` tag to the MoonLib repo so JitPack can build it, or run `mvn install` in MoonLib and set `moonlib.groupId` to `dev.lunamc` and `moonlib.artifactId` to `moonlib` in `pom.xml` |
+| `Could not find artifact com.github.LunaMCDev:MoonLib` | Push a `1.1.1-alpha` tag to the MoonLib repo so JitPack can build it, or run `mvn install` in MoonLib and set `moonlib.groupId` to `dev.lunamc` and `moonlib.artifactId` to `moonlib` in `pom.xml` |
 | Port 25565 already in use | Change `server-port` in `run/server.properties` |
 | Can't join with an offline/test account | Set `online-mode=false` in `run/server.properties` (local testing only) |
 

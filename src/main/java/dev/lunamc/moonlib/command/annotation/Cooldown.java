@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * public void daily(Player player) { ... }
  * }</pre>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

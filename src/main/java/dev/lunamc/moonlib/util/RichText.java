@@ -52,7 +52,7 @@ import java.util.Map;
  * On 1.16+ colours are exact. Below 1.16 every colour, including each step of a gradient, is
  * downsampled to the nearest of the 16 legacy colours, so the same message still looks right.
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class RichText {
 

@@ -82,7 +82,7 @@ installs JDK 25 for the build):
 <dependency>
     <groupId>com.github.LunaMCDev</groupId>
     <artifactId>MoonLib</artifactId>
-    <version>1.4.0</version>   <!-- a release tag, a commit hash, or main-SNAPSHOT -->
+    <version>1.1.1-alpha</version>   <!-- a release tag, a commit hash, or main-SNAPSHOT -->
 </dependency>
 ```
 
@@ -99,7 +99,7 @@ of these modes; see [docs/shading.md](docs/shading.md). The relocated setup:
 <dependency>
     <groupId>dev.lunamc</groupId>
     <artifactId>moonlib</artifactId>
-    <version>1.4.0</version>
+    <version>1.1.1-alpha</version>
     <scope>compile</scope>
 </dependency>
 ```

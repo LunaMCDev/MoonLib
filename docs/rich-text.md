@@ -1,6 +1,6 @@
 # Rich text
 
-*Since 1.4.0.* `RichText` formats MiniMessage-style tags into coloured text that works on **every**
+*Since 1.1.1-alpha.* `RichText` formats MiniMessage-style tags into coloured text that works on **every**
 server version. It needs no Adventure library and outputs plain strings, so it works with
 `sendMessage`, scoreboards, item names, titles, boss bars and anything else that takes a string.
 

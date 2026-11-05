@@ -4,7 +4,7 @@ package dev.lunamc.moonlib.database;
  * An action that may throw any exception, used for transactions that return nothing.
  *
  * @param <A> the input type
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 @FunctionalInterface
 public interface SqlConsumer<A> {

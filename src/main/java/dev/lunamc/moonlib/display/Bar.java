@@ -33,7 +33,7 @@ import java.util.function.Function;
  * plugin that created them shuts down MoonLib. Boss bars need 1.9 or newer; on 1.8 every method is
  * a harmless no-op (a warning is logged once).</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class Bar implements AutoCloseable {
 

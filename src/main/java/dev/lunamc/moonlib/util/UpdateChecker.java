@@ -308,7 +308,7 @@ public final class UpdateChecker implements AutoCloseable {
 
     private String format(Result result) {
         return Text.color(Text.replace(message, "plugin", plugin.getName(), "current", result.current,
-                "latest", result.latest, "url", result.downloadUrl));
+            "latest", result.latest, "url", result.downloadUrl));
     }
 
     private Result fetch() {
@@ -328,7 +328,7 @@ public final class UpdateChecker implements AutoCloseable {
                 return "https://api.github.com/repos/" + project + "/releases/latest";
             case HANGAR:
                 return "https://hangar.papermc.io/api/v1/projects/" + project.substring(project.indexOf('/') + 1)
-                        + "/latestrelease";
+                    + "/latestrelease";
             default:
                 throw new IllegalArgumentException(String.valueOf(source));
         }
@@ -376,7 +376,7 @@ public final class UpdateChecker implements AutoCloseable {
                         }
                     }
                     version = found != null ? found
-                            : String.valueOf(((Map<String, Object>) ((List<Object>) parsed).get(0)).get("version_number"));
+                        : String.valueOf(((Map<String, Object>) ((List<Object>) parsed).get(0)).get("version_number"));
                     break;
                 }
                 case GITHUB: {
@@ -425,13 +425,16 @@ public final class UpdateChecker implements AutoCloseable {
         if (v.startsWith("v") || v.startsWith("V")) {
             v = v.substring(1);
         }
-        int dash = v.indexOf('-');
+
         int plus = v.indexOf('+');
-        if (plus >= 0 && (dash < 0 || plus < dash)) {
+        if (plus >= 0) {
             v = v.substring(0, plus);
-            dash = v.indexOf('-');
         }
-        return dash < 0 ? new String[]{v, ""} : new String[]{v.substring(0, dash), v.substring(dash + 1)};
+
+        int dash = v.indexOf('-');
+        return dash < 0
+            ? new String[]{v, ""}
+            : new String[]{v.substring(0, dash), v.substring(dash + 1)};
     }
 
     private String get(String url) {

@@ -5,7 +5,7 @@ package dev.lunamc.moonlib.database;
  *
  * @param <A> the input type
  * @param <R> the result type
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 @FunctionalInterface
 public interface SqlFunction<A, R> {

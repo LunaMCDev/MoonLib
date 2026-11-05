@@ -90,7 +90,7 @@ public class Messages {
      *
      * @param enabled {@code true} to format rich-text tags
      * @return this instance
-     * @since 1.4.0
+     * @since 1.1.1-alpha
      */
     public Messages useRichText(boolean enabled) {
         this.richText = enabled;

@@ -33,7 +33,7 @@ import java.util.List;
  * <p>Create, change and delete holograms on the server thread (the location's region thread on
  * Folia).</p>
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 public final class Hologram implements AutoCloseable {
 

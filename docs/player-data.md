@@ -1,6 +1,6 @@
 # Player data
 
-*Since 1.4.0.* Almost every plugin keeps data per player: balances, stats, settings. Getting it right
+*Since 1.1.1-alpha.* Almost every plugin keeps data per player: balances, stats, settings. Getting it right
 is harder than it looks. Loading on the main thread causes lag spikes, saving on quit can race a
 quick rejoin, and a failed load followed by a save can wipe someone's progress. `PlayerCache`
 handles all of that.

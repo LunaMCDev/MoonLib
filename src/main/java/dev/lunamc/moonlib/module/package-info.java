@@ -5,6 +5,6 @@
  * {@link dev.lunamc.moonlib.module.Services} registry so modules share interfaces rather than
  * internals. See {@code docs/modules.md}.
  *
- * @since 1.4.0
+ * @since 1.1.1-alpha
  */
 package dev.lunamc.moonlib.module;

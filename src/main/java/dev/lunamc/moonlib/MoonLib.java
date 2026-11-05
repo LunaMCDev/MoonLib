@@ -62,7 +62,7 @@ import java.util.function.Supplier;
 public final class MoonLib {
 
     /** The version of this copy of MoonLib. */
-    public static final String VERSION = "1.4.0";
+    public static final String VERSION = "1.1.1-alpha";
 
     private static final String PROPERTIES = "moonlib.properties";
     private static final List<MoonContext> CONTEXTS = new CopyOnWriteArrayList<>();
